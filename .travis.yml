@@ -35,7 +35,7 @@ before_script:
   - export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
 script:
-  -echo script
+  - echo script
 
 after_script:
   - echo after_script
