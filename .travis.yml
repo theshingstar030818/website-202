@@ -14,21 +14,21 @@ addons:
     - oracle-java8-installer
     - lib32stdc++6
     - lib32z1
-# before_install:
-#   - echo before_install
+before_install:
+  - echo before_install
 
-# install:
-#   - echo install
+install:
+  - echo install
 
 
-# before_script:
-#   - echo before_script
-#   - echo $JAVA_HOME
-#   - java -version
-#   - export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+before_script:
+  - echo before_script
+  - echo $JAVA_HOME
+  - java -version
+  - export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 
-# script:
-#   - echo script
+script:
+  - echo script
 
-# after_script:
-#   - echo after_script
+after_script:
+  - echo after_script
