@@ -16,7 +16,7 @@ addons:
     - lib32z1
 before_install:
   - echo before_install
-
+  - ls -la
 install:
   - echo install
 
