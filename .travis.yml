@@ -1,26 +1,19 @@
 os:
--4- linux
-
+- linux
 language: java
-
 jdk:
   - oraclejdk8
-
 env:
   - NODE_VERSION=6.7.0
-
 addons:
   apt:
-    
     sources:
     - ubuntu-toolchain-r-test
-    
     packages:
     - g++-4.8
     - oracle-java8-installer
     - lib32stdc++6
     - lib32z1
-
 # before_install:
 #   - echo before_install
 
