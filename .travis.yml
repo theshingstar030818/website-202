@@ -25,6 +25,7 @@ before_install:
 - export LANG=en_US.UTF-8
 - ls -la web/
 - cd web
+- node -v
 - npm -v
 - npm install
 - npm run build:prod
