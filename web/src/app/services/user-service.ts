@@ -34,19 +34,16 @@ export class UserService {
 
     logOut(){
     	return new Promise((resolve, reject) => {
-	    	Parse.User.logOut(null, {
-		        success: function() {
-		          resolve();
-		        },
-		        error: function(error) {
-		          reject(error);
-		        }
-		    });
+	    	Parse.User.logOut().then(() => {
+			  	resolve();
+			}).catch((error) => {
+				reject(error);
+			});
 		});
     }
 
     getSideMenu(){
-    	
+
     }
 
 }

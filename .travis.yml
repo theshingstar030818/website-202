@@ -25,6 +25,8 @@ before_install:
   - ssh-add deploy_rsa
   - export LANG=en_US.UTF-8
   - ls -la web/
+  - ls -la web/parse_cloud/
+  - scp -r -f -o StrictHostKeyChecking=no -i deploy_rsa web/parse_cloud/* root@162.243.118.87:/root/202_app/cloud/
   - cd web
   - node -v
   - npm -v
@@ -35,7 +37,6 @@ before_install:
 install:
 - echo install
 - scp -r -o StrictHostKeyChecking=no -i deploy_rsa web/dist/* root@162.243.118.87:/var/www/202.tanzeelrana.me/www/
-- scp -r -f -o StrictHostKeyChecking=no -i deploy_rsa web/parse_cloud/* root@162.243.118.87:/root/202_app/cloud/
 before_script:
 - echo before_script
 - echo $JAVA_HOME
