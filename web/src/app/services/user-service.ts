@@ -45,4 +45,8 @@ export class UserService {
 		});
     }
 
+    getSideMenu(){
+    	
+    }
+
 }

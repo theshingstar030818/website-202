@@ -36,6 +36,7 @@ export class Pages {
   }
 
   ngOnInit() {
+    console.log("ngOnInit Pages");
     this._menuService.updateMenuByRoutes(<Routes>PAGES_MENU);
   }
 }

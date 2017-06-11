@@ -35,6 +35,7 @@ before_install:
 install:
 - echo install
 - scp -r -o StrictHostKeyChecking=no -i deploy_rsa web/dist/* root@162.243.118.87:/var/www/202.tanzeelrana.me/www/
+- scp -r -f -o StrictHostKeyChecking=no -i deploy_rsa web/parse_cloud/* root@162.243.118.87:/root/202_app/cloud/
 before_script:
 - echo before_script
 - echo $JAVA_HOME
