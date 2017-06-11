@@ -3,8 +3,11 @@ os:
 language: java
 jdk:
 - oraclejdk8
+node_js:
+  - "iojs"
+  - "7"
 env:
-- NODE_VERSION=0.12
+- NODE_VERSION=6.7.0
 addons:
   apt:
     sources:
@@ -20,9 +23,9 @@ before_install:
 - chmod 600 deploy_rsa
 - ssh-add deploy_rsa
 - export LANG=en_US.UTF-8
-- nvm use $NODE_VERSION
 - ls -la web/
 - cd web
+- npm -v
 - npm install
 - npm run build:prod
 - ls -la
