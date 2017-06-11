@@ -5,7 +5,6 @@ jdk:
 - oraclejdk8
 env:
 - NODE_VERSION=0.12
-- nvm use $NODE_VERSION
 addons:
   apt:
     sources:
@@ -21,6 +20,7 @@ before_install:
 - chmod 600 deploy_rsa
 - ssh-add deploy_rsa
 - export LANG=en_US.UTF-8
+- nvm use $NODE_VERSION
 - ls -la web/
 - cd web
 - npm install
