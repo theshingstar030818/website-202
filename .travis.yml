@@ -2,9 +2,9 @@ os:
 - linux
 language: java
 jdk:
-  - oraclejdk8
+- oraclejdk8
 env:
-  - NODE_VERSION=6.7.0
+- NODE_VERSION=6.7.0
 addons:
   apt:
     sources:
@@ -15,16 +15,18 @@ addons:
     - lib32stdc++6
     - lib32z1
 before_install:
-  - echo before_install
-  - ls -la
+- openssl aes-256-cbc -K $encrypted_133299118ef1_key -iv $encrypted_133299118ef1_iv
+  -in deploy_rsa.enc -out deploy_rsa -d
+- echo before_install
+- ls -la
 install:
-  - echo install
+- echo install
 before_script:
-  - echo before_script
-  - echo $JAVA_HOME
-  - java -version
-  - export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+- echo before_script
+- echo $JAVA_HOME
+- java -version
+- export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 script:
-  - echo script
+- echo script
 after_script:
-  - echo after_script
+- echo after_script
