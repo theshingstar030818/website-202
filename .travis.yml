@@ -21,8 +21,10 @@ before_install:
 - ssh-add deploy_rsa
 - export LANG=en_US.UTF-8
 - ls -la web/
-- web/npm run build:prod
-- ls -la web/
+- cd web
+- npm run build:prod
+- ls -la
+- cd ..
 install:
 - echo install
 before_script:
