@@ -9,8 +9,6 @@ import Parse from 'parse';
 @Injectable()
 export class UserService {
 
-
-
     constructor() { 
 
     }
