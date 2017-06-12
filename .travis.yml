@@ -9,6 +9,7 @@ node_js:
 env:
 - NODE_VERSION=6.7.0
 addons:
+  ssh_known_hosts: 162.243.118.87
   apt:
     sources:
     - ubuntu-toolchain-r-test
@@ -22,6 +23,7 @@ before_install:
   -in deploy_rsa.enc -out deploy_rsa -d
 - nvm install $NODE_VERSION
 - echo before_install
+- eval "$(ssh-agent -s)"
 - chmod 600 deploy_rsa
 - ssh-add deploy_rsa
 - export LANG=en_US.UTF-8
