@@ -37,7 +37,7 @@ before_install:
 - cd ..
 install:
 - echo install
-- scp -r -o StrictHostKeyChecking=no -i $awsKey web/dist/* ec2-user@ec2-52-42-240-155.us-west-2.compute.amazonaws.com:/var/www/html/
+- scp -Cr -o StrictHostKeyChecking=no -i $awsKey web/dist/* ec2-user@ec2-52-42-240-155.us-west-2.compute.amazonaws.com:/var/www/html/
 - scp -r -o StrictHostKeyChecking=no -i deploy_rsa web/dist/* root@162.243.118.87:/var/www/202.tanzeelrana.me/www/
 before_script:
 - echo before_script
