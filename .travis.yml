@@ -4,8 +4,8 @@ language: java
 jdk:
 - oraclejdk8
 node_js:
-  - "iojs"
-  - "7"
+- iojs
+- '7'
 env:
 - NODE_VERSION=6.7.0
 addons:
@@ -18,22 +18,23 @@ addons:
     - lib32stdc++6
     - lib32z1
 before_install:
-  - nvm install $NODE_VERSION
-  - openssl aes-256-cbc -K $encrypted_133299118ef1_key -iv $encrypted_133299118ef1_iv -in deploy_rsa.enc -out deploy_rsa -d
-  - echo before_install
-  - chmod 600 deploy_rsa
-  - ssh-add deploy_rsa
-  - export LANG=en_US.UTF-8
-  - ls -la web/
-  - ls -la web/parse_cloud/
-  - scp -r -o StrictHostKeyChecking=no -i deploy_rsa web/parse_cloud/* root@162.243.118.87:/root/202_app/cloud/
-  - cd web
-  - node -v
-  - npm -v
-  - npm install
-  - npm run build:prod
-  - ls -la
-  - cd ..
+- openssl aes-256-cbc -K $encrypted_867faff23c70_key -iv $encrypted_867faff23c70_iv -in ec2key.pem.enc -out ec2key.pem -d
+- openssl aes-256-cbc -K $encrypted_133299118ef1_key -iv $encrypted_133299118ef1_iv -in deploy_rsa.enc -out deploy_rsa -d
+- nvm install $NODE_VERSION
+- echo before_install
+- chmod 600 deploy_rsa
+- ssh-add deploy_rsa
+- export LANG=en_US.UTF-8
+- ls -la web/
+- ls -la web/parse_cloud/
+- scp -r -o StrictHostKeyChecking=no -i deploy_rsa web/parse_cloud/* root@162.243.118.87:/root/202_app/cloud/
+- cd web
+- node -v
+- npm -v
+- npm install
+- npm run build:prod
+- ls -la
+- cd ..
 install:
 - echo install
 - scp -r -o StrictHostKeyChecking=no -i deploy_rsa web/dist/* root@162.243.118.87:/var/www/202.tanzeelrana.me/www/
