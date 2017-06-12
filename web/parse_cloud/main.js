@@ -1,11 +1,23 @@
-Parse.Cloud.define('login', function(request, response){
-  Parse.User.logIn(request.params.values["email"], request.params.values["password"], {
-      success: function(user) {
-        response.success({user: JSON.stringify(user)});
-      },
-      error: function(user, error) {
-        response.error('Request failed: ' + JSON.stringify(error,null,2));
+Parse.Cloud.define('getUserRole', function(request, response){
+  
+  if(!Parse.User.current()){
+    response.error('Request did not have an authenticated user attached with it');
+  }
+
+  var userQuery = new Parse.Query(Parse.User);
+  userQuery.equalTo("objectId", Parse.User.current().id);
+  userQuery.include("role");
+  userQuery.find({
+    success: function(user)
+    {
+      if(userRetrieved[0]){
+        response.success({role: user.get("role").get("name")});
       }
+    },
+    error: function(error)
+    {
+      response.error('Request failed: ' + JSON.stringify(error,null,2));
+    }
   });
 });
 
