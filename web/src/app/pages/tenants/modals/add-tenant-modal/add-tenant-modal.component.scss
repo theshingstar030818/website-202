@@ -1,0 +1,15 @@
+@import "../../../../theme/sass/conf/conf";
+
+.modal-buttons .btn {
+  margin-right: 20px;
+}
+
+.modal-content {
+  color: $dropdown-text;
+}
+
+.checkbox {
+  display: inline-block;
+  margin-bottom: -12px;
+  margin-left: 12px;
+}

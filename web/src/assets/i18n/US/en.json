@@ -19,6 +19,8 @@
     },
     "menu": {
       "dashboard": "Dashboard",
+      "tenants": "Tenants",
+      "clients": "Clients",
       "editors": "Editors",
       "ck_editor": "CKEditor",
       "components": "Components",
