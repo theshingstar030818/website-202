@@ -1,10 +1,12 @@
 @import "../../../theme/sass/conf/conf";
 
 .modal {
+  background-color: $default-text;
   padding-top: 300px;
 
   .modal-content {
-    color: $dropdown-text;
+    background-color: $default-text;
+    color: $default-text;
 
     .modal-header {
       border: none;

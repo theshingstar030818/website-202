@@ -13,7 +13,7 @@ export class Modals {
   constructor(private modalService: NgbModal) {}
 
   addTenantModalShow(){
-    const activeModal = this.modalService.open(AddTenantModal, {size: 'lg'});
+    const activeModal = this.modalService.open(AddTenantModal, {size: 'lg', backdrop: 'static'});
     activeModal.componentInstance.modalHeader = 'New Tenant';
   }
 
