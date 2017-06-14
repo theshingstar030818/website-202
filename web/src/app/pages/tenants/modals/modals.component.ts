@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DefaultModal } from './default-modal/default-modal.component';
 import { AddTenantModal } from './add-tenant-modal/add-tenant-modal.component';
+import { Tenant } from  '../../../models/tenant/tenant';
 
 @Component({
   selector: 'modals',
@@ -15,6 +16,8 @@ export class Modals {
   addTenantModalShow(){
     const activeModal = this.modalService.open(AddTenantModal, {size: 'lg', backdrop: 'static'});
     activeModal.componentInstance.modalHeader = 'New Tenant';
+    activeModal.componentInstance.tenant = new Tenant();
+    activeModal.componentInstance.editing = false;
   }
 
   lgModalShow() {

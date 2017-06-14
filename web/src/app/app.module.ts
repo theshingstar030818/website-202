@@ -15,6 +15,7 @@ import { App } from './app.component';
 import { AppState, InternalStateType } from './app.service';
 import { GlobalState } from './global.state';
 import { NgaModule } from './theme/nga.module';
+import { ModelsModule } from './models/models.module';
 import { PagesModule } from './pages/pages.module';
 import { AuthGuard } from './services/auth-guard.service';
 import { UserService } from './services/user-service';
@@ -45,6 +46,7 @@ export type StoreType = {
     HttpModule,
     RouterModule,
     FormsModule,
+    ModelsModule,
     ReactiveFormsModule,
     NgaModule.forRoot(),
     NgbModule.forRoot(),
