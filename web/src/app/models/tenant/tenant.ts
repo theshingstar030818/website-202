@@ -9,7 +9,10 @@ import { User } from '../user/user';
 export class Tenant extends User {
 
 	companyName:String;
-	
+	companyAddress: String;
+	website: String;
+	govId3: String;
+
 	constructor() {
 		super();
 	}

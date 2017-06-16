@@ -30,13 +30,13 @@
       <div class="col-sm-6">
         <div class="form-group">
           <label for="inputFirstName">First Name</label>
-          <input [(ngModel)]="tenant.password" type="text" class="form-control" id="inputFirstName" placeholder="First Name">
+          <input [(ngModel)]="tenant.firstName" type="text" class="form-control" id="inputFirstName" placeholder="First Name">
         </div>
       </div>
       <div class="col-sm-6">
         <div class="form-group">
           <label for="inputLastName">Last Name</label>
-          <input [(ngModel)]="tenant.password" type="text" class="form-control" id="inputLastName" placeholder="Last Name">
+          <input [(ngModel)]="tenant.lastName" type="text" class="form-control" id="inputLastName" placeholder="Last Name">
         </div>
       </div>
     </div>
@@ -44,13 +44,13 @@
       <div class="col-sm-6">
         <div class="form-group">
           <label for="inputPhone">Phone</label>
-          <input [(ngModel)]="tenant.password" type="phone" class="form-control" id="inputPhone" placeholder="Phone #">
+          <input [(ngModel)]="tenant.phone" type="phone" class="form-control" id="inputPhone" placeholder="Phone #">
         </div>
       </div>
       <div class="col-sm-6">
         <div class="form-group">
           <label for="inputWebsite">Website</label>
-          <input [(ngModel)]="tenant.password" type="text" class="form-control" id="inputWebsite" placeholder="Website">
+          <input [(ngModel)]="tenant.website" type="text" class="form-control" id="inputWebsite" placeholder="Website">
         </div>
       </div>
     </div>
@@ -58,9 +58,9 @@
       <div class="col-sm-6">
         <ba-card title="Company Info" baCardClass="with-scroll">
           <label for="inputWebsite">Company Name</label>
-          <input [(ngModel)]="tenant.password" type="text" class="form-control" id="inputWebsite" placeholder="Website">
+          <input [(ngModel)]="tenant.companyName" type="text" class="form-control" id="inputWebsite" placeholder="Website">
           <label for="inputWebsite">Company Address</label>
-          <input [(ngModel)]="tenant.password" type="text" class="form-control" id="inputWebsite" placeholder="Website">
+          <input [(ngModel)]="tenant.companyAddress" type="text" class="form-control" id="inputWebsite" placeholder="Website">
         </ba-card>
       </div>
       <div class="col-sm-6">
@@ -70,7 +70,7 @@
           <label for="inputFirstName">Government ID 2</label>
           <ba-file-uploader [fileUploaderOptions]="fileUploaderOptions"></ba-file-uploader>
           <label for="inputFirstName">Proof of Address</label>
-          <ba-file-uploader [fileUploaderOptions]="fileUploaderOptions"></ba-file-uploader>
+          <ba-file-uploader #govId3 [fileUploaderOptions]="fileUploaderOptions"></ba-file-uploader>
         </div>
       </div>
     </div>

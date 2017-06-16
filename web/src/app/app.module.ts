@@ -19,12 +19,14 @@ import { ModelsModule } from './models/models.module';
 import { PagesModule } from './pages/pages.module';
 import { AuthGuard } from './services/auth-guard.service';
 import { UserService } from './services/user-service';
+import { ParseService } from './services/parse-service';
 
 // Application wide providers
 const APP_PROVIDERS = [
   AppState,
   GlobalState,
-  UserService
+  UserService,
+  ParseService
 ];
 
 export type StoreType = {

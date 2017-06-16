@@ -1,3 +1,11 @@
+Parse.Cloud.define('createTenant', function(request, response){
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  console.log(request.params);
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+});
+
+
+
 Parse.Cloud.define('getUserRole', function(request, response){
   
   if(!Parse.User.current()){

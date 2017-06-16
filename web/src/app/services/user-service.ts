@@ -4,51 +4,45 @@ import { PAGES_MENU } from '../pages/pages.menu';
 import { PAGES_MENU_TENANT } from '../pages/pages.menu.tenant';
 import { PAGES_MENU_SUPER } from '../pages/pages.menu.super';
 
-import Parse from 'parse';
+import { ParseService } from './parse-service';
 
 @Injectable()
 export class UserService {
 
-    constructor() { 
-
-    }
+    constructor(
+        private cloudService: ParseService
+    ) {}
 
     init(){
-    	console.log("init parse");
-    	Parse.initialize('202_app_id');
-	    Parse.serverURL = 'http://162.243.118.87:1340/parse';
+    	console.log("init user service");
     }
 
-    isLoggedIn(){
-    	return Parse.User.current();
+    isLoggedIn(): boolean{
+    	return this.cloudService.isLoggedIn();
     }
 
     login(values){
     	return new Promise((resolve, reject) => {
-	    	Parse.User.logIn(values["email"], values["password"], {
-		        success: function(user) {
-		          	resolve(user);
-		        },
-		        error: function(user, error) {
-		          	reject(error);
-		        }
-		    });
-		});
+            this.cloudService.login(values).then((user)=>{
+                resolve(user);
+            }).catch((error)=>{
+                reject(error);
+            });
+        });
     }
 
     logOut(){
     	return new Promise((resolve, reject) => {
-	    	Parse.User.logOut().then(() => {
-			  	resolve();
-			}).catch((error) => {
-				reject(error);
-			});
-		});
+            this.cloudService.logOut().then((user)=>{
+                resolve(user);
+            }).catch((error)=>{
+                reject(error);
+            });
+        });
     }
 
     getSideMenu(){
-    	let role = Parse.User.current().get("role");
-    	console.log("user role is : " + role);
+    	let role = this.cloudService.getUserRole();
     	if(role == "super"){
     		return PAGES_MENU_SUPER;
     	}else if(role == "tenant"){

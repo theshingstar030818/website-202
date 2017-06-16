@@ -8,10 +8,12 @@ import {Component} from '@angular/core';
 export class User {
 	
 	id:any;
-	picture:String;
-	fName:String;
-	lName:String;
-	email:String;
+	picture: String;
+	email: String;
+	password: String;
+	firstName: String;
+	lastName: String;
+	phone: String;
 	
 	constructor() {
 
@@ -22,11 +24,11 @@ export class User {
 	}
 
 	getFirstName(){
-		return this.fName;
+		return this.firstName;
 	}
 
-	setFirstName(fName: String){
-		this.fName = fName;
+	setFirstName(firstName: String){
+		this.firstName = firstName;
 	}
 
 	getEmail(){

@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgUploaderOptions } from 'ngx-uploader';
 import { Tenant } from '../../../../models/tenant/tenant';
+
+
 
 @Component({
   selector: 'add-service-modal',
@@ -11,10 +13,14 @@ import { Tenant } from '../../../../models/tenant/tenant';
 
 export class AddTenantModal implements OnInit {
 
+  @ViewChild('govId3') public govId3: any;
+
   tenant: Tenant;
   modalHeader: string;
   editing:Boolean = false;
   
+  govId: any = {}
+
   public defaultPicture = 'assets/img/theme/no-photo.png';
   
   public profile:any = {
