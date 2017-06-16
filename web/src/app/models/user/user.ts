@@ -14,7 +14,7 @@ export class User {
 	firstName: String;
 	lastName: String;
 	phone: String;
-	
+	repassword: String;
 	constructor() {
 
 	}
