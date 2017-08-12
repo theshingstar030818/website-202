@@ -14,11 +14,60 @@ var userHasRole = function(user, roleName) {
 
 var addTenant = function(request) {
   return new Promise((resolve, reject) => {
-    console.log('add tenant request : ');
-    console.log(request);
-    resolve(request);
+    addUser(request).then((user)=>{
+      
+      resolve(user);
+    }).catch((error)=>{
+      reject(error);
+    });
+  });
+}
+
+var setUserProfilePic = function(user, request){
+  return new Promise((resolve, reject) => {
+    if(request.params.profilePic.length){
+      user.set("profilePic", getParseFile(user.id + "_profilePic",{ base64: request.params.profilePic }));
+      user.save(null, {
+        success: function(user) {
+          resolve(user);
+        },
+        error: function(error) {
+          reject(error);
+        }
+      });
+    }else{
+      reject({message: "ERROR : Image upload failed, data lenght 0."});
+    }
+  });
+}
+
+var addUser = function(request){
+  return new Promise((resolve, reject) => {
+    var user = new Parse.User();
+    user.set("username", request.params.username);
+    user.set("password", request.params.password);
+    user.set("firstName", request.params.firstName);
+    user.set("lastName", request.params.lastName);
+    user.set("email", request.params.email);
+    user.signUp(null, {
+      success: function(user) {
+        setUserProfilePic(user,request).then((user)=>{
+          resolve(user);
+        }).catch((error)=>{
+          resolve(user);
+        });
+      },
+      error: function(user, error) {
+        reject(error);
+      }
+    });
   })
-  
+}
+
+var getParseFile = function(name, encoding){
+  name = name.replace(/[^a-zA-Z0-9_.]/g, '');
+  let parseFile = new Parse.File( name, encoding);
+  return parseFile;
 }
 
 Parse.Cloud.define('addTenant', function(request, response){
