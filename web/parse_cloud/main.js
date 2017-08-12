@@ -66,7 +66,7 @@ var addUser = function(request){
 
 var getParseFile = function(name, encoding){
   name = name.replace(/[^a-zA-Z0-9_.]/g, '');
-  let parseFile = new Parse.File( name, encoding);
+  var parseFile = new Parse.File( name, encoding);
   return parseFile;
 }
 
