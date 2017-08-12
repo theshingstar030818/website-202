@@ -5,7 +5,7 @@ var userHasRole = function(user, roleName) {
     query.equalTo("name", roleName);
     query.equalTo("users", user);
     query.find().then((roles)=> {
-        resolve(roles.length > 0);
+      resolve(roles.length > 0);
     }).catch((error)=>{
       reject(error);
     });
@@ -18,15 +18,19 @@ var addTenant = function(request) {
 }
 
 Parse.Cloud.define('addTenant', function(request, response){
-  if(!Parse.User.current() && userHasRole(Parse.User.current(), 'super')){
-    response.error('Unautherized user');
-  }else {
-    addTenant(request).then((tenant)=>{
-      response.success(tenant);
-    }).catch((error)=>{
-      response.error(error);
-    });
-  }
+  userHasRole(Parse.User.current(), 'super').then((result)=>{
+    if(!result){
+      response.error('Unautherized user');
+    }else {
+      addTenant(request).then((tenant)=>{
+        response.success(tenant);
+      }).catch((error)=>{
+        response.error(error);
+      });
+    }
+  }).catch((error)=>{
+    response.error(error);
+  });
 });
 
 Parse.Cloud.define('getUserRole', function(request, response){
