@@ -37,6 +37,10 @@ var addUser = function(request){
     user.set("firstName", request.params.firstName);
     user.set("lastName", request.params.lastName);
     user.set("email", request.params.email);
+
+    user.session(request);
+    user.forCurrentUser(request);
+
     user.signUp(null, {
       success: function(user) {
         setUserProfilePic(user,request).then((user)=>{
@@ -59,7 +63,6 @@ var getParseFile = function(name, encoding){
 }
 
 Parse.Cloud.define('addTenant', function(request, response){
-  Parse.User.become(request.user.getSessionToken())
   addTenant(request).then((tenant)=>{
       response.success(tenant);
   }).catch((error)=>{
