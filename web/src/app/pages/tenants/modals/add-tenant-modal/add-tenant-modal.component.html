@@ -1,4 +1,4 @@
-<div class="modal-content" style="background-color: #000000">
+<div class="modal-content">
   <div class="modal-header">
     <h4 class="modal-title">{{modalHeader}}</h4>
     <button class="close" aria-label="Close" (click)="closeModal()">
@@ -6,28 +6,76 @@
     </button>
   </div>
   <div class="modal-body">
-    {{modalContent}}
-    <form class="row form-inline">
-      <div class="form-group col-sm-3">
-        <input type="text" class="form-control" id="exampleInputName2" placeholder="Name">
+    
+    <div class="row">
+      <div class="col-md-6">
+        <ba-card title="Profile Picture" baCardClass="with-scroll">
+          <ba-picture-uploader [picture]="profile.picture" [defaultPicture]="defaultPicture" [uploaderOptions]="uploaderOptions"></ba-picture-uploader>
+        </ba-card>
       </div>
-      <div class="form-group col-sm-3">
-        <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Email">
+      <div class="col-md-6">
+        <ba-card title="Credentials" baCardClass="with-scroll">
+          <label for="inputEmail">Email</label>
+          <input [(ngModel)]="tenant.email" type="email" class="form-control" id="inputEmail" placeholder="Email">
+          <label for="inputEmail">Password</label>
+          <input [(ngModel)]="tenant.password" type="password" class="form-control" placeholder="Password">
+          <label for="inputEmail">Repeat Password</label>
+          <input [(ngModel)]="tenant.repassword" type="password" class="form-control" placeholder="Password">
+        </ba-card>
       </div>
-      <div class="form-group">
-        <div class="checkbox">
-          <ba-checkbox [(ngModel)]="isRemember" [label]="'Remember me'" [ngModelOptions]="{standalone: true}"></ba-checkbox>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label for="inputFirstName">First Name</label>
+          <input [(ngModel)]="tenant.firstName" type="text" class="form-control" id="inputFirstName" placeholder="First Name">
         </div>
       </div>
-      <div class="form-group">
-        <button type="submit" class="btn btn-primary">Send invitation</button>
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label for="inputLastName">Last Name</label>
+          <input [(ngModel)]="tenant.lastName" type="text" class="form-control" id="inputLastName" placeholder="Last Name">
+        </div>
       </div>
-    </form>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label for="inputPhone">Phone</label>
+          <input [(ngModel)]="tenant.phone" type="phone" class="form-control" id="inputPhone" placeholder="Phone #">
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label for="inputWebsite">Website</label>
+          <input [(ngModel)]="tenant.website" type="text" class="form-control" id="inputWebsite" placeholder="Website">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <ba-card title="Company Info" baCardClass="with-scroll">
+          <label for="inputWebsite">Company Name</label>
+          <input [(ngModel)]="tenant.companyName" type="text" class="form-control" id="inputWebsite" placeholder="Website">
+          <label for="inputWebsite">Company Address</label>
+          <input [(ngModel)]="tenant.companyAddress" type="text" class="form-control" id="inputWebsite" placeholder="Website">
+        </ba-card>
+      </div>
+      <div class="col-sm-6">
+        <div class="form-group">
+          <label for="inputFirstName">Government ID 1</label>
+          <ba-file-uploader [fileUploaderOptions]="fileUploaderOptions"></ba-file-uploader>
+          <label for="inputFirstName">Government ID 2</label>
+          <ba-file-uploader [fileUploaderOptions]="fileUploaderOptions"></ba-file-uploader>
+          <label for="inputFirstName">Proof of Address</label>
+          <ba-file-uploader #govId3 [fileUploaderOptions]="fileUploaderOptions"></ba-file-uploader>
+        </div>
+      </div>
+    </div>
   </div>
-
-
-
   <div class="modal-footer">
-    <button class="btn btn-primary confirm-btn" (click)="closeModal()">Save changes</button>
+    <button class="btn btn-danger confirm-btn" (click)="closeModal()">Never Mind</button>
+    <button class="btn btn-success confirm-btn" (click)="addNewTenant()">Add</button>
   </div>
 </div>

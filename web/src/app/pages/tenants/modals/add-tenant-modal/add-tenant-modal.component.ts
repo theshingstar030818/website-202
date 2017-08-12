@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgUploaderOptions } from 'ngx-uploader';
+import { Tenant } from '../../../../models/tenant/tenant';
+
+
 
 @Component({
   selector: 'add-service-modal',
@@ -9,14 +13,39 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 export class AddTenantModal implements OnInit {
 
+  @ViewChild('govId3') public govId3: any;
+
+  tenant: Tenant;
   modalHeader: string;
-  modalContent: string = ``;
-  isRemember: boolean = false;
+  editing:Boolean = false;
+  
+  govId: any = {}
+
+  public defaultPicture = 'assets/img/theme/no-photo.png';
+  
+  public profile:any = {
+    picture: ''
+  };
+  public uploaderOptions:NgUploaderOptions = {
+    // url: 'http://website.com/upload'
+    url: '',
+  };
+
+  public fileUploaderOptions:NgUploaderOptions = {
+    // url: 'http://website.com/upload'
+    url: '',
+  };
 
   constructor(private activeModal: NgbActiveModal) {
+    console.log("new tenant");
+    console.log(activeModal);
   }
 
   ngOnInit() {}
+
+  addNewTenant() {
+    console.log("add new tenant now");
+  }
 
   closeModal() {
     this.activeModal.close();
