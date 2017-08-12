@@ -19,6 +19,14 @@ var addTenant = function(request) {
 
 Parse.Cloud.define('addTenant', function(request, response){
   userHasRole(Parse.User.current(), 'super').then((result)=>{
+    console.error("addTenant : authorization : " + result);
+    console.error("addTenant : authorization : " + result);
+    console.error("addTenant : authorization : " + result);
+    console.error("addTenant : authorization : " + result);
+    console.error("addTenant : authorization : " + result);
+    console.error("addTenant : authorization : " + result);
+    console.error("addTenant : authorization : " + result);
+    console.error("addTenant : authorization : " + result);
     if(!result){
       response.error('Unautherized user');
     }else {
