@@ -13,8 +13,12 @@ var userHasRole = function(user, roleName) {
 }
 
 var addTenant = function(request) {
-  console.log('add tenant request : ');
-  console.log(request);
+  return new Promise((resolve, reject) => {
+    console.log('add tenant request : ');
+    console.log(request);
+    resolve(request);
+  })
+  
 }
 
 Parse.Cloud.define('addTenant', function(request, response){
