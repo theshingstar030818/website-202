@@ -59,17 +59,8 @@ var getParseFile = function(name, encoding){
 }
 
 Parse.Cloud.define('addTenant', function(request, response){
-  
-  userHasRole(request.params.parseSessionToken, 'super').then((result)=>{
-    if(result){
-      addTenant(request).then((tenant)=>{
-          response.success(tenant);
-      }).catch((error)=>{
-        response.error(error);
-      });
-    }else{
-      response.error(AUTHENTICATION_MESSAGE);
-    }
+  addTenant(request).then((tenant)=>{
+      response.success(tenant);
   }).catch((error)=>{
     response.error(error);
   });
