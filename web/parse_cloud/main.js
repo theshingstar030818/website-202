@@ -1,25 +1,9 @@
 
 var AUTHENTICATION_MESSAGE = 'Request did not have an authenticated user attached with it';
 
-var userHasRole = function(user, roleName) {
-  Parse.Cloud.useMasterKey();
-  return new Promise((resolve, reject) => {
-    var query = new Parse.Query(Parse.Role);
-    query.equalTo("name", roleName);
-    query.equalTo("users", user);
-    query.find().then((roles)=> {
-      resolve(roles.length > 0);
-    }).catch((error)=>{
-      reject(error);
-    });
-  });      
-}
-
 var addTenant = function(request) {
   return new Promise((resolve, reject) => {
-    Parse.Cloud.useMasterKey();
     addUser(request).then((user)=>{
-      
       resolve(user);
     }).catch((error)=>{
       reject(error);
@@ -29,7 +13,6 @@ var addTenant = function(request) {
 
 var setUserProfilePic = function(user, request){
   return new Promise((resolve, reject) => {
-    Parse.Cloud.useMasterKey();
     if(request.params.profilePic.length){
       user.set("profilePic", getParseFile(user.id + "_profilePic",{ base64: request.params.profilePic }));
       user.save(null, {
@@ -48,7 +31,6 @@ var setUserProfilePic = function(user, request){
 
 var addUser = function(request){
   return new Promise((resolve, reject) => {
-    Parse.Cloud.useMasterKey();
     var user = new Parse.User();
     user.set("username", request.params.username);
     user.set("password", request.params.password);
@@ -78,9 +60,8 @@ var getParseFile = function(name, encoding){
 
 Parse.Cloud.define('addTenant', function(request, response){
   
-  userHasRole(request.user, 'super').then((result)=>{
+  userHasRole(request.params.parseSessionToken, 'super').then((result)=>{
     if(result){
-      Parse.Cloud.useMasterKey();
       addTenant(request).then((tenant)=>{
           response.success(tenant);
       }).catch((error)=>{
@@ -122,7 +103,7 @@ Parse.Cloud.define('hasRole', function(request, response){
     response.error('Request did not have an authenticated user attached with it');
   }
   else {
-    usernameHasRole(request.params.parseSessionToken, request.params.role)
+    userHasRole(request.params.parseSessionToken, request.params.role)
       .then(function(hasRole){
         response.success({hasRole: hasRole});
       },
@@ -133,7 +114,7 @@ Parse.Cloud.define('hasRole', function(request, response){
   }
 });
 
-var usernameHasRole = function(username, rolename) {
+var userHasRole = function(username, rolename) {
   Parse.Cloud.useMasterKey();
   var queryRole = new Parse.Query(Parse.Role);
   queryRole.equalTo('name', rolename);
