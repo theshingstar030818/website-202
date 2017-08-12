@@ -17,6 +17,7 @@ var userHasRole = function(user, roleName) {
 
 var addTenant = function(request) {
   return new Promise((resolve, reject) => {
+    Parse.Cloud.useMasterKey();
     addUser(request).then((user)=>{
       
       resolve(user);
@@ -28,6 +29,7 @@ var addTenant = function(request) {
 
 var setUserProfilePic = function(user, request){
   return new Promise((resolve, reject) => {
+    Parse.Cloud.useMasterKey();
     if(request.params.profilePic.length){
       user.set("profilePic", getParseFile(user.id + "_profilePic",{ base64: request.params.profilePic }));
       user.save(null, {
@@ -46,6 +48,7 @@ var setUserProfilePic = function(user, request){
 
 var addUser = function(request){
   return new Promise((resolve, reject) => {
+    Parse.Cloud.useMasterKey();
     var user = new Parse.User();
     user.set("username", request.params.username);
     user.set("password", request.params.password);
