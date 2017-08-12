@@ -31,6 +31,7 @@ before_install:
 - cd web
 - node -v
 - npm -v
+- rm package-lock.json
 - npm install
 - npm run build:prod
 - ls -la
