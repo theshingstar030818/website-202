@@ -74,11 +74,12 @@ var getParseFile = function(name, encoding){
 
 Parse.Cloud.define('addTenant', function(request, response){
   console.log(Parse.User.current().id + "  " + Parse.User.current().username );
-  addTenant(request).then((tenant)=>{
-      response.success(tenant);
-  }).catch((error)=>{
-    response.error(error);
-  });
+  response.success(request);
+  // addTenant(request).then((tenant)=>{
+  //     response.success(tenant);
+  // }).catch((error)=>{
+  //   response.error(error);
+  // });
 });
 
 Parse.Cloud.define('getUserRole', function(request, response){
