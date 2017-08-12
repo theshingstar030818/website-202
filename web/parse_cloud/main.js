@@ -42,6 +42,7 @@ var setUserProfilePic = function(user, request){
 }
 
 var addUser = function(request){
+  console.log(Parse.User.current().id + "  " + Parse.User.current().username );
   return new Promise((resolve, reject) => {
     var user = new Parse.User();
     user.set("username", request.params.username);
@@ -49,6 +50,7 @@ var addUser = function(request){
     user.set("firstName", request.params.firstName);
     user.set("lastName", request.params.lastName);
     user.set("email", request.params.email);
+    console.log(Parse.User.current().id + "  " + Parse.User.current().username );
     user.signUp(null, {
       success: function(user) {
         setUserProfilePic(user,request).then((user)=>{
@@ -71,6 +73,7 @@ var getParseFile = function(name, encoding){
 }
 
 Parse.Cloud.define('addTenant', function(request, response){
+  console.log(Parse.User.current().id + "  " + Parse.User.current().username );
   addTenant(request).then((tenant)=>{
       response.success(tenant);
   }).catch((error)=>{
