@@ -38,7 +38,6 @@ var addUser = function(request){
     user.set("lastName", request.params.lastName);
     user.set("email", request.params.email);
 
-    user.session(request);
     user.forCurrentUser(request);
 
     user.signUp(null, {
