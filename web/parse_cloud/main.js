@@ -15,16 +15,16 @@ var addTenant = function(request) {
       tenant.set("status", request.params.companyStatus? 'active' : 'unverified');
       tenant.save(null, { useMasterKey: true }).then(
         function(tenant) {
-          resolve(tenant);
-          // updateTenantCompanyLogoPic().then((tenant)=>{
-          //   // generateRolesAndSetPermissionsNewTenant(user,tenant).then((user,tenant)=>{
-          //   //   resolve(tenant);
-          //   // }).catch((error)=>{
-          //   //   reject(error);
-          //   // })
-          // }).catch((error)=>{
-          //   reject(error);
-          // })
+          updateTenantCompanyLogoPic().then((tenant)=>{
+            // generateRolesAndSetPermissionsNewTenant(user,tenant).then((user,tenant)=>{
+            //   resolve(tenant);
+            // }).catch((error)=>{
+            //   reject(error);
+            // })
+            resolve(tenant);
+          }).catch((error)=>{
+            reject(error);
+          })
         },
         function(tenant, error) {
           reject(error)
