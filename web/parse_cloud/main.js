@@ -48,37 +48,27 @@ var getRole = function(roleName){
 }
 
 var getAllGenericRoles = function() {
-  var generic_roles = [];
-  var sequence = Promise.resolve(generic_roles);
-  for(var i=0; i<GENERIC_ROLE_NAMES.length; i++){
-    sequence = getRole(GENERIC_ROLE_NAMES[i]).then(function(role) {
-      generic_roles.push(role);
-    })
-  }
-  return sequence;
+  return new Promise((resolve, reject) => {    
+    var sequence = [];
+    for(var i=0; i<GENERIC_ROLE_NAMES.length; i++){
+      sequence.push(getRole(GENERIC_ROLE_NAMES[i]));
+    }
+    Promise.all(sequence).then(values => {
+      resolve(values);
+    });
+  });
 }
 
-var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
+var generateRolesForNewTenant = function(user, tenant){
   return new Promise((resolve, reject) => {    
-    createRole(user, user.id).then((sharedRole)=>{
-      createRole(user, user.id+'_admin').then((adminRole)=>{
-        createRole(user, user.id+'_client').then((clientRole)=>{
-          createRole(user, user.id+'_employee').then((employeeRole)=>{
-            getAllGenericRoles().then((generic_roles)=>{
-              console.log(generic_roles.length);
-              resolve(generic_roles)
-            }).catch((error)=>{
-              reject(error);
-            })
-          }).catch((error)=>{
-            reject(error);
-          })
-        }).catch((error)=>{
-          reject(error);
-        })
-      }).catch((error)=>{
-        reject(error);
-      })
+    
+    var sequence = [];
+    for(var i=1; i<GENERIC_ROLE_NAMES.length; i++){
+      sequence.push(createRole( user.id+'_'+GENERIC_ROLE_NAMES[i]));
+    }
+    Promise.all(sequence).then(values => {
+      resolve(values);
+    });
 
       // var user_acl = new Parse.ACL();
       // user_acl.setWriteAccess( user, true);
@@ -112,7 +102,6 @@ var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
       //     reject(error);
       //   }
       // );
-    })
   });
 }
 
