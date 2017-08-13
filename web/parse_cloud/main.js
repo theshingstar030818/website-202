@@ -5,6 +5,8 @@ var addTenant = function(request) {
   return new Promise((resolve, reject) => {
     addUser(request).then((user)=>{
 
+      console.log("user created");
+
       var Tenant = Parse.Object.extend("Tenant");
       var tenant = new Tenant();
 
@@ -13,16 +15,16 @@ var addTenant = function(request) {
       tenant.set("status", request.params.companyStatus);
       tenant.save(null, { useMasterKey: true }).then(
         function(tenant) {
-          updateTenantCompanyLogoPic().then((tenant)=>{
-            resolve(tenant);
-            // generateRolesAndSetPermissionsNewTenant(user,tenant).then((user,tenant)=>{
-            //   resolve(tenant);
-            // }).catch((error)=>{
-            //   reject(error);
-            // })
-          }).catch((error)=>{
-            reject(error);
-          })
+          resolve(tenant);
+          // updateTenantCompanyLogoPic().then((tenant)=>{
+          //   // generateRolesAndSetPermissionsNewTenant(user,tenant).then((user,tenant)=>{
+          //   //   resolve(tenant);
+          //   // }).catch((error)=>{
+          //   //   reject(error);
+          //   // })
+          // }).catch((error)=>{
+          //   reject(error);
+          // })
         },
         function(tenant, error) {
           reject(error)
