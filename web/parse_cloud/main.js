@@ -1,7 +1,7 @@
 
 var AUTHENTICATION_MESSAGE = 'Request did not have an authenticated user attached with it';
 // do not chage the order of these role names, may ad to the end of array 
-var GENERIC_ROLE_NAMES = ['super','tenant','admin','client','employee'];
+var GENERIC_ROLE_NAMES = ['super','tenant','admin','client','employee','customer'];
 
 
 var addTenant = function(request) {
@@ -73,9 +73,12 @@ var setNewTenantACL = function(user, tenant, tenantRoles, genericRoles){
 
     // add user to generic tenant role
     var genericTenantRole = genericRoles[1];
-    genericTenantRole.getUsers().add(user);
+    var genericAdminRole = genericRoles[2];
 
-    saveAll([tenant,user,genericTenantRole]).then((parseObjs)=>{
+    genericTenantRole.getUsers().add(user);
+    genericAdminRole.getUsers().add(user);
+
+    saveAll([tenant,user,genericTenantRole,genericAdminRole]).then((parseObjs)=>{
       resolve(parseObjs[0]);
     }).catch((error)=>{
       reject(error);
