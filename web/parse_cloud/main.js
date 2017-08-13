@@ -64,7 +64,7 @@ var setNewTenantACL = function(user, tenant, tenantRoles, genericRoles){
 
     var acl = new Parse.ACL();    
     acl.setRoleWriteAccess( user.id+'_admin', true);
-    acl.setRoleReadAccess( user+'_admin', true);
+    acl.setRoleReadAccess( user.id+'_admin', true);
     acl.setRoleWriteAccess('super', true);
     acl.setRoleReadAccess('super', true);
     acl.setRoleReadAccess(user.id, true);
