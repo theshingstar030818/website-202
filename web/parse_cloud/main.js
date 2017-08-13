@@ -130,6 +130,9 @@ var createRole = function(user, name){
     var role_acl = new Parse.ACL();
     role_acl.setRoleReadAccess( 'super', true);
     role_acl.setRoleWriteAccess( 'super', true);
+    if(name.includes('tenant')){
+      name = user.id;
+    }
     var role = new Parse.Role(name, role_acl);
     role.save(null, { useMasterKey: true }).then(
       function(role) {    
