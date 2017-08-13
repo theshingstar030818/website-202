@@ -31,6 +31,7 @@ var setUserProfilePic = function(user, request){
 
 var addUser = function(request){
   return new Promise((resolve, reject) => {
+    Parse.Cloud.useMasterKey();
     var user = new Parse.User();
     user.set("username", request.params.username);
     user.set("password", request.params.password);
