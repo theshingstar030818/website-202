@@ -15,7 +15,7 @@ var addTenant = function(request) {
       tenant.set("status", request.params.companyStatus? 'active' : 'unverified');
       tenant.save(null, { useMasterKey: true }).then(
         function(tenant) {
-          updateTenantCompanyLogoPic().then((tenant)=>{
+          updateTenantCompanyLogoPic().then((tenant, request)=>{
             // generateRolesAndSetPermissionsNewTenant(user,tenant).then((user,tenant)=>{
             //   resolve(tenant);
             // }).catch((error)=>{
