@@ -15,14 +15,14 @@ var setUserProfilePic = function(user, request){
   return new Promise((resolve, reject) => {
     if(request.params.profilePic.length){
       user.set("profilePic", getParseFile(user.id + "_profilePic",{ base64: request.params.profilePic }));
-      user.save(null, {
-        success: function(user) {
+      user.save(null, { useMasterKey: true }).then(
+        function(user) {
           resolve(user);
         },
-        error: function(error) {
+        function(error) {
           reject(error);
         }
-      });
+      );
     }else{
       reject({message: "ERROR : Image upload failed, data lenght 0."});
     }
