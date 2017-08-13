@@ -4,12 +4,8 @@ var AUTHENTICATION_MESSAGE = 'Request did not have an authenticated user attache
 var addTenant = function(request) {
   return new Promise((resolve, reject) => {
     addUser(request).then((user)=>{
-
-      console.log("user created");
-
       var Tenant = Parse.Object.extend("Tenant");
       var tenant = new Tenant();
-
       tenant.set("user", user);
       tenant.set("companyName", request.params.companyName);
       tenant.set("status", request.params.companyStatus? 'active' : 'unverified');
@@ -41,6 +37,7 @@ var getRole = function(roleName){
     query.equals("name", roleName);
     query.find({ useMasterKey: true }).then(
       function(role) {
+        console.log("found roles : " + role.lenght);
         resolve(role[0]);
       },
       function(error) {
@@ -92,7 +89,10 @@ var createRole = function(user, name){
       function(role) {
         role_acl.setRoleReadAccess( user.id, true);
         role.setACL(role_acl);
-        getRole('super').then((superRole)=>{
+        console.log("getting super role");
+        getRole('super').then(
+          function(superRole){
+          console.log("found duper role");
           role.getRoles().add(superRole);
           role.getUsers().add(user);
           role.save(null, { useMasterKey: true }).then(
@@ -103,10 +103,9 @@ var createRole = function(user, name){
               reject(error);
             }
           );
-        }).catch((error)=>{
-
+        },function(error){
+          reject(error);
         });
-        
       },
       function(role, error) {
         reject(error);
