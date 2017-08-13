@@ -40,6 +40,7 @@ var addUser = function(request){
     user.set("email", request.params.email);
 
     user.signUp(null, {
+      sessionToken: request.user.getSessionToken(),
       success: function(user) {
         setUserProfilePic(user,request).then((user)=>{
           resolve(user);
