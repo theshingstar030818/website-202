@@ -39,19 +39,15 @@ var addUser = function(request){
     user.set("lastName", request.params.lastName);
     user.set("email", request.params.email);
 
-    user.signUp(null, {
-      sessionToken: request.user.getSessionToken(),
-      success: function(user) {
+    user.signUp(null, { useMasterKey: true }).then(function(user) {
         setUserProfilePic(user,request).then((user)=>{
           resolve(user);
         }).catch((error)=>{
           reject(error);
         });
-      },
-      error: function(user, error) {
+      },function(user, error) {
         reject(error);
-      }
-    });
+      });
   })
 }
 
