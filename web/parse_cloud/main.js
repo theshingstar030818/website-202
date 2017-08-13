@@ -21,7 +21,6 @@ var addTenant = function(request) {
             }).catch((error)=>{
               reject(error);
             })
-            resolve(tenant);
           }).catch((error)=>{
             reject(error);
           })
