@@ -81,8 +81,8 @@ var createRole = function(user, name){
       function(role) {
         role_acl.setRoleWriteAccess( user.id, true);
         role.setACL(role_acl);
-        role.getRoles().add('super');
-        role.getUsers().add(user);
+        // role.getRoles().add(['super']);
+        // role.getUsers().add([user]);
         role.save(null, { useMasterKey: true }).then(
           function(role) {
             resolve(role);
