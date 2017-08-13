@@ -49,7 +49,7 @@ var getRole = function(roleName){
 
 var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
   return new Promise((resolve, reject) => {    
-    createRole(user, user.id).then((adminRole)=>{
+    createRole(user, user.id).then((sharedRole)=>{
       var user_acl = new Parse.ACL();
       user_acl.setWriteAccess( user, true);
       user_acl.setRoleWriteAccess( 'super', true);
