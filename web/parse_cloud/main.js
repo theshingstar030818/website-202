@@ -16,7 +16,7 @@ var addTenant = function(request) {
       tenant.save(null, { useMasterKey: true }).then(
         function(tenant) {
           updateTenantCompanyLogoPic(tenant, request).then((tenant)=>{
-            generateRolesAndSetPermissionsNewTenant(user,tenant).then((user,tenant)=>{
+            generateRolesAndSetPermissionsNewTenant(user,tenant).then((tenant)=>{
               resolve(tenant);
             }).catch((error)=>{
               reject(error);
@@ -70,19 +70,16 @@ var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
 
 var createRole = function(user, name){
   return new Promise((resolve, reject) => {
-
     var role_acl = new Parse.ACL();
-    role_acl.setWriteAccess( user, true);
+    role_acl.setRoleReadAccess( 'super', true);
     role_acl.setRoleWriteAccess( 'super', true);
-    role_acl.setPublicReadAccess(false);
-
     var role = new Parse.Role(name, role_acl);
     role.save(null, { useMasterKey: true }).then(
       function(role) {
         role_acl.setRoleWriteAccess( user.id, true);
         role.setACL(role_acl);
         // role.getRoles().add(['super']);
-        // role.getUsers().add([user]);
+        role.getUsers().add(user);
         role.save(null, { useMasterKey: true }).then(
           function(role) {
             resolve(role);
