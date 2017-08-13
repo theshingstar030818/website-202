@@ -34,7 +34,7 @@ var addTenant = function(request) {
 var getRole = function(roleName){
   return new Promise((resolve, reject) => {
     var query = new Parse.Query('_Role');
-    query.equals("name", roleName);
+    query.equalTo("name", roleName);
     query.find({ useMasterKey: true }).then(
       function(role) {
         console.log("found roles : " + role.lenght);
