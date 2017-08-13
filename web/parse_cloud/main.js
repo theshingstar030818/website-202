@@ -40,7 +40,7 @@ var getRole = function(roleName){
       function(role) {
         resolve(role[0]);
       },
-      function(error) {
+      function(role, error) {
         reject(error);
       }
     );
@@ -63,10 +63,12 @@ var generateRolesForNewTenant = function(user, tenant){
   return new Promise((resolve, reject) => {    
     var sequence = [];
     for(var i=1; i<GENERIC_ROLE_NAMES.length; i++){
-      sequence.push(createRole( user, user.id+'_'+GENERIC_ROLE_NAMES[i] ));
+      sequence.push(createRole( user, user.id+'_'+GENERIC_ROLE_NAMES[i]));
     }
     Promise.all(sequence).then(values => {
       resolve(values);
+    }).catch((error)=>{
+      reject(error);
     });
 
       // var user_acl = new Parse.ACL();
@@ -132,7 +134,7 @@ var createRole = function(user, name){
     role.save(null, { useMasterKey: true }).then(
       function(role) {    
         resolve(role);
-      },function(error){
+      },function(role, error){
         reject(error);
       }
     )
@@ -147,7 +149,7 @@ var updateTenantCompanyLogoPic = function(tenant, request){
         function(tenant) {
           resolve(tenant);
         },
-        function(error) {
+        function(tenant, error) {
           reject(error);
         }
       );
@@ -165,7 +167,7 @@ var setUserProfilePic = function(user, request){
         function(user) {
           resolve(user);
         },
-        function(error) {
+        function(user, error) {
           reject(error);
         }
       );
