@@ -1,5 +1,6 @@
 
 var AUTHENTICATION_MESSAGE = 'Request did not have an authenticated user attached with it';
+var GENERIC_ROLE_NAMES = ['super','tenant','admin','client','employee'];
 
 var addTenant = function(request) {
   return new Promise((resolve, reject) => {
@@ -37,7 +38,6 @@ var getRole = function(roleName){
     query.equalTo("name", roleName);
     query.find({ useMasterKey: true }).then(
       function(role) {
-        console.log("found roles : " + role.lenght);
         resolve(role[0]);
       },
       function(error) {
@@ -47,13 +47,29 @@ var getRole = function(roleName){
   });
 }
 
+var getAllGenericRoles = function() {
+  var generic_roles = [];
+  var sequence = Promise.resolve(generic_roles);
+  for(var i=0; i<GENERIC_ROLE_NAMES.length; i++){
+    sequence = getRole(GENERIC_ROLE_NAMES[i]).then(function(role) {
+      generic_roles.push(role);
+    })
+  }
+  return sequence;
+}
+
 var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
   return new Promise((resolve, reject) => {    
     createRole(user, user.id).then((sharedRole)=>{
       createRole(user, user.id+'_admin').then((adminRole)=>{
         createRole(user, user.id+'_client').then((clientRole)=>{
           createRole(user, user.id+'_employee').then((employeeRole)=>{
-            
+            getAllGenericRoles().then((generic_roles)=>{
+              console.log(generic_roles.length);
+              resolve(generic_roles)
+            }).catch((error)=>{
+              reject(error);
+            })
           }).catch((error)=>{
             reject(error);
           })
@@ -64,38 +80,38 @@ var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
         reject(error);
       })
 
-      var user_acl = new Parse.ACL();
-      user_acl.setWriteAccess( user, true);
-      user_acl.setRoleWriteAccess( 'super', true);
-      user_acl.setRoleReadAccess('super', true);
-      user_acl.setRoleReadAccess(sharedRole, true);
-      user.setACL(user_acl);
+      // var user_acl = new Parse.ACL();
+      // user_acl.setWriteAccess( user, true);
+      // user_acl.setRoleWriteAccess( 'super', true);
+      // user_acl.setRoleReadAccess('super', true);
+      // user_acl.setRoleReadAccess(sharedRole, true);
+      // user.setACL(user_acl);
 
-      var tenant_acl = new Parse.ACL();
-      tenant_acl.setRoleWriteAccess('super', true);
-      tenant_acl.setRoleReadAccess('super', true);
-      tenant_acl.setRoleReadAccess(sharedRole, true);
-      tenant.setACL(user_acl);
+      // var tenant_acl = new Parse.ACL();
+      // tenant_acl.setRoleWriteAccess('super', true);
+      // tenant_acl.setRoleReadAccess('super', true);
+      // tenant_acl.setRoleReadAccess(sharedRole, true);
+      // tenant.setACL(user_acl);
 
-      user.save(null, { useMasterKey: true }).then(
-        function(user) {
-          tenant.save(null, { useMasterKey: true }).then(
-            function(tenant) {
-              addUserToTenantsRole(user).then((tenantRole)=>{
-                resolve(tenant);
-              }).catch((error)=>{
-                reject(error);
-              })
-            },
-            function(tenant, error) {
-              reject(error);
-            }
-          );
-        },
-        function(user ,error) {
-          reject(error);
-        }
-      );
+      // user.save(null, { useMasterKey: true }).then(
+      //   function(user) {
+      //     tenant.save(null, { useMasterKey: true }).then(
+      //       function(tenant) {
+      //         addUserToTenantsRole(user).then((tenantRole)=>{
+      //           resolve(tenant);
+      //         }).catch((error)=>{
+      //           reject(error);
+      //         })
+      //       },
+      //       function(tenant, error) {
+      //         reject(error);
+      //       }
+      //     );
+      //   },
+      //   function(user ,error) {
+      //     reject(error);
+      //   }
+      // );
     })
   });
 }
