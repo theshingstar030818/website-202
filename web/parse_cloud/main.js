@@ -38,8 +38,6 @@ var addUser = function(request){
     user.set("lastName", request.params.lastName);
     user.set("email", request.params.email);
 
-    user.forCurrentUser(request);
-
     user.signUp(null, {
       success: function(user) {
         setUserProfilePic(user,request).then((user)=>{
