@@ -53,18 +53,22 @@ var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
       var user_acl = new Parse.ACL();
       user_acl.setWriteAccess( user, true);
       user_acl.setRoleWriteAccess( 'super', true);
-      user_acl.setPublicReadAccess(true);
+      user_acl.setRoleReadAccess(sharedRole, true);
       user.setACL(user_acl);
       var tenant_acl = new Parse.ACL();
       tenant_acl.setWriteAccess( user, true);
       tenant_acl.setRoleWriteAccess('super', true);
-      tenant_acl.setPublicReadAccess(true);
+      tenant_acl.setRoleReadAccess(sharedRole, true);
       tenant.setACL(user_acl);
       user.save(null, { useMasterKey: true }).then(
         function(user) {
           tenant.save(null, { useMasterKey: true }).then(
             function(tenant) {
-              resolve(tenant);
+              addUserToTenantsRole(user).then((tenantRole)=>{
+                resolve(tenant);
+              }).catch((error)=>{
+                reject(error);
+              })
             },
             function(tenant, error) {
               reject(error);
@@ -76,6 +80,25 @@ var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
         }
       );
     })
+  });
+}
+
+var addUserToTenantsRole = function(user){
+  return new Promise((resolve, reject) => {
+    getRole('tenant').then(
+      function(tenantRole){
+      tenantRole.getUsers().add(user);
+      tenantRole.save(null, { useMasterKey: true }).then(
+        function(tenantRole) {
+          resolve(tenantRole);
+        },
+        function(tenantRole, error) {
+          reject(error);
+        }
+      );
+    },function(error){
+      reject(error);
+    });
   });
 }
 
