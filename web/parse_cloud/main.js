@@ -2,6 +2,7 @@
 var AUTHENTICATION_MESSAGE = 'Request did not have an authenticated user attached with it';
 var GENERIC_ROLE_NAMES = ['super','tenant','admin','client','employee'];
 
+
 var addTenant = function(request) {
   return new Promise((resolve, reject) => {
     addUser(request).then((user)=>{
@@ -13,14 +14,22 @@ var addTenant = function(request) {
       tenant.save(null, { useMasterKey: true }).then(
         function(tenant) {
           updateTenantCompanyLogoPic(tenant, request).then((tenant)=>{
-            generateRolesForNewTenant(user,tenant).then((tenant)=>{
-              resolve(tenant);
+            generateRolesForNewTenant(user,tenant).then((tenantRoles)=>{
+              getAllGenericRoles().then((genericRoles)=>{
+                setPermissionsForTenant(user, tenant, tenantRoles, genericRoles).then((tenant)=>{
+                  resolve(tenant);
+                }).catch((error)=>{
+                  reject(error);
+                })//setPermissionsForTenant
+              }).catch((error)=>{
+                reject(error);
+              })//getAllGenericRoles            
             }).catch((error)=>{
               reject(error);
-            })
+            })//generateRolesForNewTenant
           }).catch((error)=>{
             reject(error);
-          })
+          })//updateTenantCompanyLogoPic
         },
         function(tenant, error) {
           reject(error)
@@ -29,6 +38,46 @@ var addTenant = function(request) {
     }).catch((error)=>{
       reject(error);
     });
+  });
+}
+
+var setPermissionsForTenant = function(user, tenant, tenantRoles, genericRoles){
+  return new Promise((resolve, reject) => {
+    // add super users permissions
+    addRoleToRole(genericRoles[0],tenantRoles).then((tenantRoles)=>{
+      resolve(tenant);
+    }).catch((error)=>{
+      reject(error)
+    })
+  });
+}
+
+// child inherits all parents permissions
+// child: Parse.Role
+// parents: Parse.Role[]
+var addRoleToRole = function(child ,parents){
+  return new Promise((resolve, reject) => {
+    var sequence = [];
+    for(var i=0; i<parents.length; i++){
+      parents[i].getRoles().add(child);
+      sequence.push(save(parents[i]));
+    }
+    Promise.all(sequence).then(values => {
+      resolve(values);
+    });
+  });
+}
+
+var save = function(parseObject){
+  return new Promise((resolve, reject) => {
+    parseObject.save(null, { useMasterKey: true }).then(
+      function(parseObject) {
+        resolve(parseObject);
+      },
+      function(parseObject, error) {
+        reject(error);
+      }
+    );
   });
 }
 
@@ -109,7 +158,7 @@ var generateRolesForNewTenant = function(user, tenant){
 var addUserToTenantsRole = function(user){
   return new Promise((resolve, reject) => {
     getRole('tenant').then(
-      function(tenantRole){
+    function(tenantRole){
       tenantRole.getUsers().add(user);
       tenantRole.save(null, { useMasterKey: true }).then(
         function(tenantRole) {
@@ -119,7 +168,7 @@ var addUserToTenantsRole = function(user){
           reject(error);
         }
       );
-    },function(error){
+    },function(tenantRole, error){
       reject(error);
     });
   });
@@ -130,9 +179,7 @@ var createRole = function(user, name){
     var role_acl = new Parse.ACL();
     role_acl.setRoleReadAccess( 'super', true);
     role_acl.setRoleWriteAccess( 'super', true);
-    if(name.includes('tenant')){
-      name = user.id;
-    }
+    if(name.includes('tenant')){name = user.id;}
     var role = new Parse.Role(name, role_acl);
     role.save(null, { useMasterKey: true }).then(
       function(role) {    
@@ -232,7 +279,7 @@ Parse.Cloud.define('getUserRole', function(request, response){
         response.success({role: user.get("role").get("name")});
       }
     },
-    error: function(error)
+    error: function(user, error)
     {
       response.error('Request failed: ' + JSON.stringify(error,null,2));
     }
@@ -248,7 +295,7 @@ Parse.Cloud.define('hasRole', function(request, response){
       .then(function(hasRole){
         response.success({hasRole: hasRole});
       },
-      function(error){
+      function(hasRole, error){
         console.error('Request failed: ' + JSON.stringify(error,null,2));
         response.error('Request failed: ' + JSON.stringify(error,null,2));
       });
