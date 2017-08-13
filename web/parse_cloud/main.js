@@ -6,6 +6,7 @@ var GENERIC_ROLE_NAMES = ['super','tenant','admin','client','employee'];
 var addTenant = function(request) {
   return new Promise((resolve, reject) => {
     addUser(request).then((user)=>{
+      
       var Tenant = Parse.Object.extend("Tenant");
       var tenant = new Tenant();
       tenant.set("user", user);
@@ -16,11 +17,11 @@ var addTenant = function(request) {
           updateTenantCompanyLogoPic(tenant, request).then((tenant)=>{
             generateRolesForNewTenant(user,tenant).then((tenantRoles)=>{
               getAllGenericRoles().then((genericRoles)=>{
-                setPermissionsForTenant(user, tenant, tenantRoles, genericRoles).then((tenant)=>{
+                setPermissionsForNewTenant(user, tenant, tenantRoles, genericRoles).then((tenant)=>{
                   resolve(tenant);
                 }).catch((error)=>{
                   reject(error);
-                })//setPermissionsForTenant
+                })//setPermissionsForNewTenant
               }).catch((error)=>{
                 reject(error);
               })//getAllGenericRoles            
@@ -41,13 +42,69 @@ var addTenant = function(request) {
   });
 }
 
-var setPermissionsForTenant = function(user, tenant, tenantRoles, genericRoles){
+var setPermissionsForNewTenant = function(user, tenant, tenantRoles, genericRoles){
   return new Promise((resolve, reject) => {
     // add super users permissions
-    addRoleToRole(genericRoles[0],tenantRoles).then((tenantRoles)=>{
-      resolve(tenant);
+    addRoleToRoles(genericRoles[0],tenantRoles).then((tenantRoles)=>{
+      // Set New Tenant ACLs
+      setNewTenantACL(user, tenant, tenantRoles, genericRoles).then((tenant)=>{
+        resolve(tenant);
+      }).catch((error)=>{
+        reject(error)
+      })
     }).catch((error)=>{
       reject(error)
+    })
+  });
+}
+
+var setNewTenantACL = function(user, tenant, tenantRoles, genericRoles){
+  return new Promise((resolve, reject) => {
+    var tenant_acl = new Parse.ACL();
+    tenant_acl.setRoleWriteAccess('super', true);
+    tenant_acl.setRoleReadAccess('super', true);
+    tenant_acl.setRoleReadAccess(user.id, true);
+    tenant.setACL(tenant_acl);
+    save(tenant).then((tenant)=>{
+      resolve(tenant);
+    }).catch((error)=>{
+      reject(error);
+    });
+  });
+
+
+}
+
+// parseObj: Parse.Object
+// roles: Parse.Role[]
+var addRolesReadAccessToACL = function(parseObj ,roles){
+  return new Promise((resolve, reject) => {
+    var sequence = [];
+    
+    var acl = parseObj.getACL();
+    for(var i=0; i<roles.length; i++){
+      acl.setRoleReadAccess(roles[i], true);
+      parseObj.setACL(acl);
+      sequence.push(save(parseObj));
+    }    
+    Promise.all(sequence).then(values => {
+      resolve(values);
+    });
+  });
+}
+
+// parseObj: Parse.Object
+// roles: Parse.Role[]
+var addRolesWriteAccessToACL = function(parseObj ,roles){
+  return new Promise((resolve, reject) => {
+    var acl = parseObj.getACL();
+    for(var i=0; i<roles.length; i++){
+      acl.setRoleWriteAccess(roles[i], true);
+    }
+    save(parseObj).then((parseObj)=>{
+      resolve(parseObj);
+    }).catch((error)=>{
+      reject(error);
     })
   });
 }
@@ -55,7 +112,7 @@ var setPermissionsForTenant = function(user, tenant, tenantRoles, genericRoles){
 // child inherits all parents permissions
 // child: Parse.Role
 // parents: Parse.Role[]
-var addRoleToRole = function(child ,parents){
+var addRoleToRoles = function(child ,parents){
   return new Promise((resolve, reject) => {
     var sequence = [];
     for(var i=0; i<parents.length; i++){
@@ -181,13 +238,18 @@ var createRole = function(user, name){
     role_acl.setRoleWriteAccess( 'super', true);
     if(name.includes('tenant')){name = user.id;}
     var role = new Parse.Role(name, role_acl);
-    role.save(null, { useMasterKey: true }).then(
-      function(role) {    
-        resolve(role);
-      },function(role, error){
+    save(role).then((role)=>{
+      role_acl.setRoleReadAccess( user.id, true);
+      role_acl.setRoleWriteAccess( user.id, true);
+      role.setACL(role_acl);
+      save(role).then((role)=>{
+        resolve(role);        
+      }).catch((error)=>{
         reject(error);
-      }
-    )
+      })
+    }).catch((error)=>{
+      reject(error);
+    })
   })
 }
 
@@ -225,6 +287,14 @@ var setUserProfilePic = function(user, request){
       reject({message: "ERROR : Image upload failed, data lenght 0."});
     }
   });
+}
+
+var addSuperACLPermissions = function(parseObj){
+  var parseObj_acl = new Parse.ACL();
+  parseObj_acl.setRoleWriteAccess('super', true);
+  parseObj_acl.setRoleReadAccess('super', true);
+  parseObj.setACL(parseObj_acl);
+  return parseObj;
 }
 
 var addUser = function(request){
