@@ -43,7 +43,7 @@ var addUser = function(request){
         setUserProfilePic(user,request).then((user)=>{
           resolve(user);
         }).catch((error)=>{
-          resolve(user);
+          reject(error);
         });
       },
       error: function(user, error) {
