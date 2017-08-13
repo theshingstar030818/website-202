@@ -36,6 +36,21 @@ var addTenant = function(request) {
   });
 }
 
+var getRole = function(roleName){
+  return new Promise((resolve, reject) => {
+    var query = new Parse.Query('_Role');
+    query.equals("name", roleName);
+    query.find({ useMasterKey: true }).then(
+      function(role) {
+        resolve(role[0]);
+      },
+      function(error) {
+        reject(error);
+      }
+    );
+  });
+}
+
 var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
   return new Promise((resolve, reject) => {    
     createRole(user, user.id).then((adminRole)=>{
@@ -46,7 +61,7 @@ var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
       user.setACL(user_acl);
       var tenant_acl = new Parse.ACL();
       tenant_acl.setWriteAccess( user, true);
-      tenant_acl.setRoleWriteAccess( 'super', true);
+      tenant_acl.setRoleWriteAccess('super', true);
       tenant_acl.setPublicReadAccess(true);
       tenant.setACL(user_acl);
       user.save(null, { useMasterKey: true }).then(
@@ -78,16 +93,21 @@ var createRole = function(user, name){
       function(role) {
         role_acl.setRoleReadAccess( user.id, true);
         role.setACL(role_acl);
-        role.getRoles().add(Parse.Role('super'));
-        role.getUsers().add(user);
-        role.save(null, { useMasterKey: true }).then(
-          function(role) {
-            resolve(role);
-          },
-          function(role, error) {
-            reject(error);
-          }
-        );
+        getRole('super').then((superRole)=>{
+          role.getRoles().add(superRole);
+          role.getUsers().add(user);
+          role.save(null, { useMasterKey: true }).then(
+            function(role) {
+              resolve(role);
+            },
+            function(role, error) {
+              reject(error);
+            }
+          );
+        }).catch((error)=>{
+
+        });
+        
       },
       function(role, error) {
         reject(error);
