@@ -37,47 +37,38 @@ var addTenant = function(request) {
 }
 
 var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
-  
-  // createRole(user, 'admin', ).then((adminRole)=>{
-  //   console.log("role admin created ");
-
-  // })
-  return new Promise((resolve, reject) => {
-    
-    var user_acl = new Parse.ACL();
-    user_acl.setWriteAccess( user, true);
-    user_acl.setRoleWriteAccess( 'super', true);
-    user_acl.setPublicReadAccess(true);
-    user.setACL(user_acl);
-
-    var tenant_acl = new Parse.ACL();
-    tenant_acl.setWriteAccess( user, true);
-    tenant_acl.setRoleWriteAccess( 'super', true);
-    tenant_acl.setPublicReadAccess(true);
-    tenant.setACL(user_acl);
-
-    user.save(null, { useMasterKey: true }).then(
-      function(user) {
-        tenant.save(null, { useMasterKey: true }).then(
-          function(tenant) {
-            resolve(tenant)
-          },
-          function(tenant, error) {
-            reject(error);
-          }
-        );
-      },
-      function(user ,error) {
-        reject(error);
-      }
-    );
-
+  return new Promise((resolve, reject) => {    
+    createRole(user, user.id, ).then((adminRole)=>{
+      var user_acl = new Parse.ACL();
+      user_acl.setWriteAccess( user, true);
+      user_acl.setRoleWriteAccess( 'super', true);
+      user_acl.setPublicReadAccess(true);
+      user.setACL(user_acl);
+      var tenant_acl = new Parse.ACL();
+      tenant_acl.setWriteAccess( user, true);
+      tenant_acl.setRoleWriteAccess( 'super', true);
+      tenant_acl.setPublicReadAccess(true);
+      tenant.setACL(user_acl);
+      user.save(null, { useMasterKey: true }).then(
+        function(user) {
+          tenant.save(null, { useMasterKey: true }).then(
+            function(tenant) {
+              resolve(tenant);
+            },
+            function(tenant, error) {
+              reject(error);
+            }
+          );
+        },
+        function(user ,error) {
+          reject(error);
+        }
+      );
+    })
   });
-
-
 }
 
-var createRole = function(user, type){
+var createRole = function(user, name){
   return new Promise((resolve, reject) => {
 
     var role_acl = new Parse.ACL();
@@ -85,11 +76,11 @@ var createRole = function(user, type){
     role_acl.setRoleWriteAccess( 'super', true);
     role_acl.setPublicReadAccess(false);
 
-    var role = new Parse.Role(user.id+'_'+type, role_acl);
+    var role = new Parse.Role(name, role_acl);
     role.save(null, { useMasterKey: true }).then(
       function(role) {
-        role_acl.setRoleWriteAccess( user.id+'_admin', true);
-        role.setACL(role_acl);        
+        role_acl.setRoleWriteAccess( user.id, true);
+        role.setACL(role_acl);
         role.getRoles().add('super');
         role.getUsers().add(user);
         role.save(null, { useMasterKey: true }).then(
