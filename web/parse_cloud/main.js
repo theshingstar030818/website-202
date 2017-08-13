@@ -1,5 +1,6 @@
 
 var AUTHENTICATION_MESSAGE = 'Request did not have an authenticated user attached with it';
+// do not chage the order of these role names, may ad to the end of array 
 var GENERIC_ROLE_NAMES = ['super','tenant','admin','client','employee'];
 
 
@@ -60,19 +61,38 @@ var setPermissionsForNewTenant = function(user, tenant, tenantRoles, genericRole
 
 var setNewTenantACL = function(user, tenant, tenantRoles, genericRoles){
   return new Promise((resolve, reject) => {
-    var tenant_acl = new Parse.ACL();
-    tenant_acl.setRoleWriteAccess('super', true);
-    tenant_acl.setRoleReadAccess('super', true);
-    tenant_acl.setRoleReadAccess(user.id, true);
-    tenant.setACL(tenant_acl);
-    save(tenant).then((tenant)=>{
-      resolve(tenant);
+
+    var acl = new Parse.ACL();    
+    acl.setRoleWriteAccess( user.id+'_admin', true);
+    acl.setRoleReadAccess( user+'_admin', true);
+    acl.setRoleWriteAccess('super', true);
+    acl.setRoleReadAccess('super', true);
+    acl.setRoleReadAccess(user.id, true);
+    tenant.setACL(acl);
+    user.setACL(acl);
+
+    // add user to generic tenant role
+    var genericTenantRole = genericRoles[1];
+    genericTenantRole.getUsers().add(user);
+
+    saveAll([tenant,user,genericTenantRole]).then((parseObjs)=>{
+      resolve(parseObjs[0]);
     }).catch((error)=>{
       reject(error);
     });
   });
+}
 
-
+var saveAll = function(parseObjs){
+  return new Promise((resolve, reject) => {
+    var sequence = [];
+    for(var i=0; i<parseObjs.length; i++){
+      sequence.push(save(parseObjs[i]));
+    }    
+    Promise.all(sequence).then(values => {
+      resolve(values);
+    });
+  });
 }
 
 // parseObj: Parse.Object
@@ -176,39 +196,6 @@ var generateRolesForNewTenant = function(user, tenant){
     }).catch((error)=>{
       reject(error);
     });
-
-      // var user_acl = new Parse.ACL();
-      // user_acl.setWriteAccess( user, true);
-      // user_acl.setRoleWriteAccess( 'super', true);
-      // user_acl.setRoleReadAccess('super', true);
-      // user_acl.setRoleReadAccess(sharedRole, true);
-      // user.setACL(user_acl);
-
-      // var tenant_acl = new Parse.ACL();
-      // tenant_acl.setRoleWriteAccess('super', true);
-      // tenant_acl.setRoleReadAccess('super', true);
-      // tenant_acl.setRoleReadAccess(sharedRole, true);
-      // tenant.setACL(user_acl);
-
-      // user.save(null, { useMasterKey: true }).then(
-      //   function(user) {
-      //     tenant.save(null, { useMasterKey: true }).then(
-      //       function(tenant) {
-      //         addUserToTenantsRole(user).then((tenantRole)=>{
-      //           resolve(tenant);
-      //         }).catch((error)=>{
-      //           reject(error);
-      //         })
-      //       },
-      //       function(tenant, error) {
-      //         reject(error);
-      //       }
-      //     );
-      //   },
-      //   function(user ,error) {
-      //     reject(error);
-      //   }
-      // );
   });
 }
 
