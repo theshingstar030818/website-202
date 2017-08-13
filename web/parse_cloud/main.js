@@ -50,16 +50,33 @@ var getRole = function(roleName){
 var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
   return new Promise((resolve, reject) => {    
     createRole(user, user.id).then((sharedRole)=>{
+      createRole(user, user.id+'_admin').then((adminRole)=>{
+        createRole(user, user.id+'_client').then((clientRole)=>{
+          createRole(user, user.id+'_employee').then((employeeRole)=>{
+            
+          }).catch((error)=>{
+            reject(error);
+          })
+        }).catch((error)=>{
+          reject(error);
+        })
+      }).catch((error)=>{
+        reject(error);
+      })
+
       var user_acl = new Parse.ACL();
       user_acl.setWriteAccess( user, true);
       user_acl.setRoleWriteAccess( 'super', true);
+      user_acl.setRoleReadAccess('super', true);
       user_acl.setRoleReadAccess(sharedRole, true);
       user.setACL(user_acl);
+
       var tenant_acl = new Parse.ACL();
-      tenant_acl.setWriteAccess( user, true);
       tenant_acl.setRoleWriteAccess('super', true);
+      tenant_acl.setRoleReadAccess('super', true);
       tenant_acl.setRoleReadAccess(sharedRole, true);
       tenant.setACL(user_acl);
+
       user.save(null, { useMasterKey: true }).then(
         function(user) {
           tenant.save(null, { useMasterKey: true }).then(
@@ -109,32 +126,13 @@ var createRole = function(user, name){
     role_acl.setRoleWriteAccess( 'super', true);
     var role = new Parse.Role(name, role_acl);
     role.save(null, { useMasterKey: true }).then(
-      function(role) {
-        role_acl.setRoleReadAccess( user.id, true);
-        role.setACL(role_acl);
-        console.log("getting super role");
-        getRole('super').then(
-          function(superRole){
-          console.log("found duper role");
-          role.getRoles().add(superRole);
-          role.getUsers().add(user);
-          role.save(null, { useMasterKey: true }).then(
-            function(role) {
-              resolve(role);
-            },
-            function(role, error) {
-              reject(error);
-            }
-          );
-        },function(error){
-          reject(error);
-        });
-      },
-      function(role, error) {
+      function(role) {    
+        resolve(role);
+      },function(error){
         reject(error);
       }
-    );
-  });
+    )
+  })
 }
 
 var updateTenantCompanyLogoPic = function(tenant, request){
