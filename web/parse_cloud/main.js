@@ -13,7 +13,7 @@ var addTenant = function(request) {
       tenant.save(null, { useMasterKey: true }).then(
         function(tenant) {
           updateTenantCompanyLogoPic(tenant, request).then((tenant)=>{
-            generateRolesAndSetPermissionsNewTenant(user,tenant).then((tenant)=>{
+            generateRolesForNewTenant(user,tenant).then((tenant)=>{
               resolve(tenant);
             }).catch((error)=>{
               reject(error);
@@ -61,7 +61,6 @@ var getAllGenericRoles = function() {
 
 var generateRolesForNewTenant = function(user, tenant){
   return new Promise((resolve, reject) => {    
-    
     var sequence = [];
     for(var i=1; i<GENERIC_ROLE_NAMES.length; i++){
       sequence.push(createRole( user.id+'_'+GENERIC_ROLE_NAMES[i]));
