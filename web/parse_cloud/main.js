@@ -4,10 +4,98 @@ var AUTHENTICATION_MESSAGE = 'Request did not have an authenticated user attache
 var addTenant = function(request) {
   return new Promise((resolve, reject) => {
     addUser(request).then((user)=>{
-      resolve(user);
+
+      var Tenant = Parse.Object.extend("Tenant");
+      var tenant = new Tenant();
+
+      tenant.set("user", user);
+      tenant.set("companyName", request.params.companyName);
+      tenant.set("status", request.params.companyStatus);
+      tenant.save(null, { useMasterKey: true }).then(
+        function(tenant) {
+          updateTenantCompanyLogoPic().then((tenant)=>{
+            resolve(tenant);
+            // generateRolesAndSetPermissionsNewTenant(user,tenant).then((user,tenant)=>{
+            //   resolve(tenant);
+            // }).catch((error)=>{
+            //   reject(error);
+            // })
+          }).catch((error)=>{
+            reject(error);
+          })
+        },
+        function(tenant, error) {
+          reject(error)
+        }
+      );
     }).catch((error)=>{
       reject(error);
     });
+  });
+}
+
+var generateRolesAndSetPermissionsNewTenant = function(user, tenant){
+  
+
+  
+  var user_acl = new Parse.ACL();
+  user_acl.setWriteAccess( user, true);
+  user_acl.setRoleWriteAccess( 'super', true);
+  user_acl.setPublicReadAccess(true);
+  user.setACL(user_acl);
+
+  var tenant_acl = new Parse.ACL();
+  tenant_acl.setWriteAccess( user, true);
+  tenant_acl.setRoleWriteAccess( 'super', true);
+  tenant_acl.setPublicReadAccess(true);
+  tenant.setACL(user_acl);
+
+
+}
+
+var createRole = function(user, type, acl){
+  return new Promise((resolve, reject) => {
+    var role_acl = new Parse.ACL();
+    role_acl.setWriteAccess( user, true);
+    role_acl.setRoleWriteAccess( 'super', true);
+    var role = new Parse.Role(user.id+'_'+type, role_acl);
+    role.save(null, { useMasterKey: true }).then(
+      function(role) {
+        role.getRoles().add('super');
+        role.getUsers().add(user);
+        role.save(null, { useMasterKey: true }).then(
+          function(role) {
+            resolve(role);
+          },
+          function(error) {
+            reject(error);
+          }
+        );
+        
+      },
+      function(error) {
+        reject(error);
+      }
+    );
+  });
+
+}
+
+var updateTenantCompanyLogoPic = function(tenant, request){
+  return new Promise((resolve, reject) => {
+    if(request.params.companyLogoPic.length){
+      tenant.set("logo", getParseFile(tenant.id + "_profilePic",{ base64: request.params.profilePic }));
+      tenant.save(null, { useMasterKey: true }).then(
+        function(tenant) {
+          resolve(tenant);
+        },
+        function(error) {
+          reject(error);
+        }
+      );
+    }else{
+      reject({message: "ERROR : Image upload failed, data lenght 0."});
+    }
   });
 }
 
@@ -31,7 +119,6 @@ var setUserProfilePic = function(user, request){
 
 var addUser = function(request){
   return new Promise((resolve, reject) => {
-    Parse.Cloud.useMasterKey();
     var user = new Parse.User();
     user.set("username", request.params.username);
     user.set("password", request.params.password);
@@ -41,13 +128,14 @@ var addUser = function(request){
 
     user.signUp(null, { useMasterKey: true }).then(function(user) {
         setUserProfilePic(user,request).then((user)=>{
-          resolve(user);
+          resolve(user)
         }).catch((error)=>{
-          reject(error);
-        });
+          reject(error)
+        })
       },function(user, error) {
-        reject(error);
-      });
+        reject(error)
+      }
+    )
   })
 }
 
@@ -105,7 +193,6 @@ Parse.Cloud.define('hasRole', function(request, response){
 });
 
 var userHasRole = function(username, rolename) {
-  Parse.Cloud.useMasterKey();
   var queryRole = new Parse.Query(Parse.Role);
   queryRole.equalTo('name', rolename);
   return queryRole.first({useMasterKey:true})
