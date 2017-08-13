@@ -76,9 +76,9 @@ var createRole = function(user, name){
     var role = new Parse.Role(name, role_acl);
     role.save(null, { useMasterKey: true }).then(
       function(role) {
-        role_acl.setRoleWriteAccess( user.id, true);
+        role_acl.setRoleReadAccess( user.id, true);
         role.setACL(role_acl);
-        // role.getRoles().add(['super']);
+        role.getRoles().add(Parse.Role('super'));
         role.getUsers().add(user);
         role.save(null, { useMasterKey: true }).then(
           function(role) {
@@ -94,7 +94,6 @@ var createRole = function(user, name){
       }
     );
   });
-
 }
 
 var updateTenantCompanyLogoPic = function(tenant, request){
