@@ -12,7 +12,7 @@ var addTenant = function(request) {
 
       tenant.set("user", user);
       tenant.set("companyName", request.params.companyName);
-      tenant.set("status", request.params.companyStatus);
+      tenant.set("status", request.params.companyStatus? 'active' : 'unverified');
       tenant.save(null, { useMasterKey: true }).then(
         function(tenant) {
           resolve(tenant);
