@@ -246,7 +246,7 @@ var createRole = function(user, name){
 var updateTenantCompanyLogoPic = function(tenant, request){
   return new Promise((resolve, reject) => {
     if(request.params.companyLogoPic.length){
-      tenant.set("logo", getParseFile(tenant.id + "_companyLogoPic",{ base64: request.params.profilePic }));
+      tenant.set("logo", getParseFile(tenant.id + "_companyLogoPic",{ base64: request.params.companyLogoPic }));
       tenant.save(null, { useMasterKey: true }).then(
         function(tenant) {
           resolve(tenant);
