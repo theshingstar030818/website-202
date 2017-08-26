@@ -319,7 +319,7 @@ Parse.Cloud.define('newClient', function(request, response){
   var admin = request.user;
   
   console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-  get("Tenant").then((tenant)=>{
+  get("Tenant",request).then((tenant)=>{
     console.log("Tenant : " + tenant);
     console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
     response.success("newClient");
@@ -328,18 +328,14 @@ Parse.Cloud.define('newClient', function(request, response){
   });
 });
 
-var get = function(endpoint){
+var get = function(endpoint,req){
   return new Promise((resolve, reject) => {
     var obj = Parse.Object.extend(endpoint);
     var query = new Parse.Query(obj);
-    query.find({
-      success: function(results) {
-        // Do something with the returned Parse.Object values
-        resolve(results);
-      },
-      error: function(error) {
-        reject("Error: " + error.code + " " + error.message);
-      }
+    query.find({ sessionToken: req.user.getSessionToken() }).then(function(settings) {
+      res.success(settings);
+    }, function(error) {
+      res.error(error);
     });
   });      
 }
