@@ -315,6 +315,15 @@ var getParseFile = function(name, encoding){
   return parseFile;
 }
 
+Parse.Cloud.define('newClient', function(request, response){
+  console.log();
+  response("newClient");
+});
+
+Parse.Cloud.define('updateClient', function(request, response){
+  response("updateClient");
+});
+
 Parse.Cloud.define('addTenant', function(request, response){
   addTenant(request).then((tenant)=>{
       response.success(tenant);
