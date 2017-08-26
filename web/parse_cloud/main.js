@@ -263,7 +263,7 @@ var updateTenantCompanyLogoPic = function(tenant, request){
 
 var setUserProfilePic = function(user, request){
   return new Promise((resolve, reject) => {
-    if(request.params.profilePic.length){
+    if(request.params.profilePic && request.params.profilePic.length){
       user.set("profilePic", getParseFile(user.id + "_profilePic",{ base64: request.params.profilePic }));
       user.save(null, { useMasterKey: true }).then(
         function(user) {
@@ -320,7 +320,6 @@ Parse.Cloud.define('newClient', function(request, response){
   
   console.log(divider);
   console.log("SessionToken : " + request.user.getSessionToken());
-
   var query = new Parse.Query("Tenant");
   query.find({ sessionToken: request.user.getSessionToken() }).then(function(tenant) {
     console.log("tenant : "  + tenant.length);
