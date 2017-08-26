@@ -328,12 +328,12 @@ Parse.Cloud.define('newClient', function(request, response){
   });
 });
 
-var get = function(obj){
+var get = function(className){
   console.log("getTenant");
   return new Promise((resolve, reject) => {
     
-    var obj = Parse.Object.extend(obj);
-    var query = new Parse.Query(obj);
+    var classObject = Parse.Object.extend(className);
+    var query = new Parse.Query(classObject);
     query.find({
       success: function(obj) {
         console.log(obj.length + " obj found");
