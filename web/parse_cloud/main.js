@@ -176,22 +176,6 @@ var getRole = function(roleName){
   });
 }
 
-var getTenant = function(){
-  console.log("getTenant");
-  return new Promise((resolve, reject) => {
-    var query = new Parse.Query('Tenant');
-    query.find().then(
-      function(tenant) {
-        console.log(tenant.length + " tenants found");
-        resolve(tenant[0]);
-      },
-      function(role, error) {
-        reject(error);
-      }
-    );
-  });
-}
-
 var getAllGenericRoles = function() {
   return new Promise((resolve, reject) => {    
     var sequence = [];
@@ -344,9 +328,26 @@ Parse.Cloud.define('newClient', function(request, response){
     
     response.success("newClient");
   }).catch((error)=>{
-    response.error("newClient error");
+    response.error(error);
   });
 });
+
+var getTenant = function(){
+  console.log("getTenant");
+  return new Promise((resolve, reject) => {
+    var query = new Parse.Query('Tenant');
+    query.find({
+      success: function(results) {
+        console.log(tenant.length + " tenants found");
+        resolve(tenant[0]);
+      },
+      error: function(error) {
+        reject(error);
+      }
+    });
+  });
+}
+
 
 Parse.Cloud.define('updateClient', function(request, response){
   console.log(JSON.stringify(request.params));
