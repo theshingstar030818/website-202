@@ -316,11 +316,12 @@ var getParseFile = function(name, encoding){
 }
 
 Parse.Cloud.define('newClient', function(request, response){
-  console.log();
+  console.log(request.params.parseSessionToken);
   response.success("newClient");
 });
 
 Parse.Cloud.define('updateClient', function(request, response){
+  console.log(request.params.parseSessionToken);
   response.success("updateClient");
 });
 
