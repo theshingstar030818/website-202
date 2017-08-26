@@ -328,6 +328,22 @@ Parse.Cloud.define('newClient', function(request, response){
   });
 });
 
+var get = function(endpoint){
+  return new Promise((resolve, reject) => {
+    var obj = Parse.Object.extend(endpoint);
+    var query = new Parse.Query(obj);
+    query.find({
+      success: function(results) {
+        // Do something with the returned Parse.Object values
+        resolve(results);
+      },
+      error: function(error) {
+        reject("Error: " + error.code + " " + error.message);
+      }
+    });
+  });      
+}
+
 var get = function(className){
   console.log("getTenant");
   return new Promise((resolve, reject) => {
