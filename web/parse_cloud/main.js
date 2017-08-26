@@ -321,25 +321,24 @@ Parse.Cloud.define('newClient', function(request, response){
   console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 
   
-  getTenant().then((tenant)=>{
+  get("Tenant").then((tenant)=>{
     
-    console.log("Tenant : " + tenant.id);
+    console.log("Tenant : " + tenant[0]['id']);
     console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-    
     response.success("newClient");
   }).catch((error)=>{
     response.error(error);
   });
 });
 
-var getTenant = function(){
+var get = function(obj){
   console.log("getTenant");
   return new Promise((resolve, reject) => {
-    var query = new Parse.Query('Tenant');
+    var query = new Parse.Query(obj);
     query.find({
-      success: function(results) {
-        console.log(tenant.length + " tenants found");
-        resolve(tenant[0]);
+      success: function(obj) {
+        console.log(obj.length + " obj found");
+        resolve(obj);
       },
       error: function(error) {
         reject(error);
