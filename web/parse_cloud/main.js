@@ -320,7 +320,7 @@ Parse.Cloud.define('newClient', function(request, response){
   
   console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
   get("Tenant").then((tenant)=>{
-    console.log("Tenant : " + tenant[0]['id']);
+    console.log("Tenant : " + tenant);
     console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
     response.success("newClient");
   }).catch((error)=>{
