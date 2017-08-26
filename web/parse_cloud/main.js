@@ -319,10 +319,7 @@ Parse.Cloud.define('newClient', function(request, response){
   var admin = request.user;
   
   console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-
-  
   get("Tenant").then((tenant)=>{
-    
     console.log("Tenant : " + tenant[0]['id']);
     console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
     response.success("newClient");
@@ -334,6 +331,8 @@ Parse.Cloud.define('newClient', function(request, response){
 var get = function(obj){
   console.log("getTenant");
   return new Promise((resolve, reject) => {
+    
+    var obj = Parse.Object.extend(obj);
     var query = new Parse.Query(obj);
     query.find({
       success: function(obj) {
