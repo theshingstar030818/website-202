@@ -316,35 +316,23 @@ var getParseFile = function(name, encoding){
 }
 
 Parse.Cloud.define('newClient', function(request, response){
-  console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");  
+  var divider = "\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
+  
+  console.log(divider);
+  console.log("SessionToken : " + request.user.getSessionToken());
+
   var query = new Parse.Query("Tenant");
   query.find({ sessionToken: request.user.getSessionToken() }).then(function(tenant) {
     console.log("tenant : "  + tenant.length);
-    request.success(tenant);
+    addUser(request).then((clientUser)=>{
+      response.success(clientUser);
+    }).catch((error)=>{
+      response.error(error);
+    });
   }, function(error) {
-    request.error(error);
+    response.error(error);
   });
 });
-
-
-var get = function(className){
-  console.log("getTenant");
-  return new Promise((resolve, reject) => {
-    
-    var classObject = Parse.Object.extend(className);
-    var query = new Parse.Query(classObject);
-    query.find({
-      success: function(obj) {
-        console.log(obj.length + " obj found");
-        resolve(obj);
-      },
-      error: function(error) {
-        reject(error);
-      }
-    });
-  });
-}
-
 
 Parse.Cloud.define('updateClient', function(request, response){
   console.log(JSON.stringify(request.params));
