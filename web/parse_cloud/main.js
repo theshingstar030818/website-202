@@ -316,29 +316,16 @@ var getParseFile = function(name, encoding){
 }
 
 Parse.Cloud.define('newClient', function(request, response){
-  var admin = request.user;
-  
-  console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-  get("Tenant",request).then((tenant)=>{
-    console.log("Tenant : " + tenant);
-    console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-    response.success("newClient");
-  }).catch((error)=>{
-    response.error(error);
+  console.log("\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");  
+  var query = new Parse.Query("Tenant");
+  query.find({ sessionToken: request.user.getSessionToken() }).then(function(tenant) {
+    console.log("tenant : "  + tenant.length);
+    request.success(tenant);
+  }, function(error) {
+    request.error(error);
   });
 });
 
-var get = function(endpoint,req){
-  return new Promise((resolve, reject) => {
-    var obj = Parse.Object.extend(endpoint);
-    var query = new Parse.Query(obj);
-    query.find({ sessionToken: req.user.getSessionToken() }).then(function(settings) {
-      res.success(settings);
-    }, function(error) {
-      res.error(error);
-    });
-  });      
-}
 
 var get = function(className){
   console.log("getTenant");
