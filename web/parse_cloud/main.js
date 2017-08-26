@@ -317,11 +317,11 @@ var getParseFile = function(name, encoding){
 
 Parse.Cloud.define('newClient', function(request, response){
   console.log();
-  response("newClient");
+  response.success("newClient");
 });
 
 Parse.Cloud.define('updateClient', function(request, response){
-  response("updateClient");
+  response.success("updateClient");
 });
 
 Parse.Cloud.define('addTenant', function(request, response){
@@ -333,7 +333,7 @@ Parse.Cloud.define('addTenant', function(request, response){
 });
 
 Parse.Cloud.define('getUserRole', function(request, response){
-  
+
   if(!Parse.User.current()){
     response.error('Request did not have an authenticated user attached with it');
   }
