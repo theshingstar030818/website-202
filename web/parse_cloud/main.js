@@ -263,13 +263,10 @@ var updateTenantCompanyLogoPic = function(tenant, request){
 
 var setUserProfilePic = function(user, request){
   return new Promise((resolve, reject) => {
+    console.log("profile pic : ");
+    console.log(JSON.stringify(request.params.profilePic));
     if(request.params.profilePic && request.params.profilePic.length){
-      if(request.params.profilePic.__type){
-        user.set("profilePic", getParseFile(user.id + "_profilePic",{ base64: request.params.profilePic.url }));
-      }else{
-        user.set("profilePic", getParseFile(user.id + "_profilePic",{ base64: request.params.profilePic }));
-      }
-      
+      user.set("profilePic", getParseFile(user.id + "_profilePic",{ base64: request.params.profilePic }));
       user.save(null, { useMasterKey: true }).then(
         function(user) {
           resolve(user);
@@ -329,7 +326,12 @@ Parse.Cloud.define('newClient', function(request, response){
   query.find({ sessionToken: request.user.getSessionToken() }).then(function(tenant) {
     console.log("tenant : "  + tenant.length);
     addUser(request).then((clientUser)=>{
-      response.success(clientUser);
+      console.log("created new user for client : " + clientUser.id);
+      
+      var Client = Parse.Object.extend("Client");
+      var client = new Client();
+
+      response.success(client);
     }).catch((error)=>{
       response.error(error);
     });
