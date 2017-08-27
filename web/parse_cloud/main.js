@@ -352,20 +352,28 @@ Parse.Cloud.define('newClient', function(request, response){
 });
 
 var setNewClientACLRolesAndPermissions = function(user, client, tenant){
+  console.log("setNewClientACLRolesAndPermissions ..............");
+  
   return new Promise((resolve, reject) => {
-
     var acl = new Parse.ACL();
-    
     // Roles
+    console.log(tenant.id);
     acl.setRoleReadAccess(tenant.id, true);
+
+    console.log(tenant.id+'_admin');
     acl.setRoleWriteAccess( tenant.id+'_admin', true);
     acl.setRoleReadAccess( tenant.id+'_admin', true);
+
+    console.log('super');
     acl.setRoleWriteAccess('super', true);
     acl.setRoleReadAccess('super', true);
 
     // Users 
+    console.log(tenant.id);
     acl.setReadAccess( tenant.id, true);
     acl.setWriteAccess( tenant.id, true);
+    
+    console.log(user.id);
     acl.setReadAccess( user.id, true);
     acl.setWriteAccess( user.id, true);
 
