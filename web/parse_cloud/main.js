@@ -355,13 +355,20 @@ var setNewClientACLRolesAndPermissions = function(user, client, tenant){
   return new Promise((resolve, reject) => {
 
     var acl = new Parse.ACL();
+    
+    // Roles
     acl.setRoleReadAccess(tenant.id, true);
-    acl.setRoleWriteAccess( user.id+'_admin', true);
-    acl.setRoleReadAccess( user.id+'_admin', true);
     acl.setRoleWriteAccess( tenant.id+'_admin', true);
     acl.setRoleReadAccess( tenant.id+'_admin', true);
     acl.setRoleWriteAccess('super', true);
     acl.setRoleReadAccess('super', true);
+
+    // Users 
+    acl.setWriteAccess( tenant.id, true);
+    acl.setReadAccess( tenant.id, true);
+    acl.setWriteAccess( user.id, true);
+    acl.setReadAccess( user.id, true);
+
     client.setACL(acl);
     user.setACL(acl);
 
