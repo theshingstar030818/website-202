@@ -264,7 +264,12 @@ var updateTenantCompanyLogoPic = function(tenant, request){
 var setUserProfilePic = function(user, request){
   return new Promise((resolve, reject) => {
     if(request.params.profilePic && request.params.profilePic.length){
-      user.set("profilePic", getParseFile(user.id + "_profilePic",{ base64: request.params.profilePic }));
+      if(request.params.profilePic.__type){
+        user.set("profilePic", getParseFile(user.id + "_profilePic",{ base64: request.params.profilePic.url }));
+      }else{
+        user.set("profilePic", getParseFile(user.id + "_profilePic",{ base64: request.params.profilePic }));
+      }
+      
       user.save(null, { useMasterKey: true }).then(
         function(user) {
           resolve(user);
@@ -296,15 +301,15 @@ var addUser = function(request){
     user.set("lastName", request.params.lastName);
     user.set("email", request.params.email);
 
-    user.signUp(null, { useMasterKey: true }).then(function(user) {
-        setUserProfilePic(user,request).then((user)=>{
-          resolve(user)
-        }).catch((error)=>{
-          reject(error)
-        })
-      },function(user, error) {
+    user.signUp(null, { useMasterKey: true }).then(function(user) {  
+      setUserProfilePic(user,request).then((user)=>{
+        resolve(user)
+      }).catch((error)=>{
         reject(error)
-      }
+      })
+    },function(user, error) {
+      reject(error)
+    }
     )
   })
 }
