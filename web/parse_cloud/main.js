@@ -276,7 +276,8 @@ var setUserProfilePic = function(user, request){
         }
       );
     }else{
-      reject({message: "ERROR : Image upload failed, data lenght 0."});
+      console.error({message: "ERROR : Image upload failed, data lenght 0."});
+      resolve(user);
     }
   });
 }
