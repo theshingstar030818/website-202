@@ -320,9 +320,7 @@ var getParseFile = function(name, encoding){
 
 Parse.Cloud.define('newClient', function(request, response){
   var divider = "\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
-  
   console.log(divider);
-  console.log("SessionToken : " + request.user.getSessionToken());
   var query = new Parse.Query("Tenant");
   query.find({ sessionToken: request.user.getSessionToken() }).then(function(tenant) {
     console.log("tenant : "  + tenant.length);
@@ -331,7 +329,17 @@ Parse.Cloud.define('newClient', function(request, response){
       
       var Client = Parse.Object.extend("Client");
       var client = new Client();
+      
+      client.set('name',request.params.name);
+      client.set('addressString',request.params.addressString);
+      client.set('email',request.params.email);
+      client.set('phone',request.params.phone);
 
+      setNewClientACLRolesAndPermissions(clientUser,client,tenant).then((client)=>{
+        resolve(client);
+      }).catch((error)=>{
+        response.error(error);
+      });
       response.success(client);
     }).catch((error)=>{
       response.error(error);
@@ -340,6 +348,41 @@ Parse.Cloud.define('newClient', function(request, response){
     response.error(error);
   });
 });
+
+var setNewClientACLRolesAndPermissions = function(user, client, tenant){
+  return new Promise((resolve, reject) => {
+
+    var acl = new Parse.ACL();
+    acl.setRoleReadAccess(tenant.id, true);
+    acl.setRoleWriteAccess( user.id+'_admin', true);
+    acl.setRoleReadAccess( user.id+'_admin', true);
+    acl.setRoleWriteAccess( tenant.id+'_admin', true);
+    acl.setRoleReadAccess( tenant.id+'_admin', true);
+    acl.setRoleWriteAccess('super', true);
+    acl.setRoleReadAccess('super', true);
+    client.setACL(acl);
+    user.setACL(acl);    
+    saveAll([user,client]).then((parseObjs)=>{
+      getRole(tenant.id+'_client').then((clientRole)=>{
+        clientRole.getUsers().add(user);
+        getRole(tenant.id).then((globalRole)=>{
+          globalRole.getUsers().add(user);
+          saveAll([clientRole,globalRole]).then((parseObjs)=>{
+            resolve(client);
+          }).catch((error)=>{
+            reject(error);
+          });
+        }).catch((error)=>{
+          reject(error);
+        });
+      }).catch((error)=>{
+        reject(error);
+      });
+    }).catch((error)=>{
+      reject(error);
+    });
+  });
+}
 
 Parse.Cloud.define('updateClient', function(request, response){
   console.log(JSON.stringify(request.params));
