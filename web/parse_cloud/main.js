@@ -363,9 +363,16 @@ var setNewClientACLRolesAndPermissions = function(user, client, tenant){
     acl.setRoleWriteAccess('super', true);
     acl.setRoleReadAccess('super', true);
     client.setACL(acl);
-    user.setACL(acl);    
+    user.setACL(acl);
+
+    console.log("saving acl on user and new client obj");
+    console.log(acl);
+
     saveAll([user,client]).then((parseObjs)=>{
+      console.log("ACL SAVED ......");
+      console.log(tenant.id+'_client' + " getRole");
       getRole(tenant.id+'_client').then((clientRole)=>{
+        console.log("clientRole : " + JSON.stringify(clientRole));
         clientRole.getUsers().add(user);
         getRole(tenant.id).then((globalRole)=>{
           globalRole.getUsers().add(user);
