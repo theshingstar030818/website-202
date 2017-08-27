@@ -334,13 +334,15 @@ Parse.Cloud.define('newClient', function(request, response){
       client.set('addressString',request.params.addressString);
       client.set('email',request.params.email);
       client.set('phone',request.params.phone);
-
-      setNewClientACLRolesAndPermissions(clientUser,client,tenant).then((client)=>{
-        resolve(client);
+      save(client).then((client)=>{
+        setNewClientACLRolesAndPermissions(clientUser,client,tenant).then((client)=>{
+          response.success(client);
+        }).catch((error)=>{
+          response.error(error);
+        });
       }).catch((error)=>{
         response.error(error);
-      });
-      response.success(client);
+      });      
     }).catch((error)=>{
       response.error(error);
     });
