@@ -364,10 +364,10 @@ var setNewClientACLRolesAndPermissions = function(user, client, tenant){
     acl.setRoleReadAccess('super', true);
 
     // Users 
-    acl.setRoleReadAccess( tenant.id, true);
-    acl.setRoleWriteAccess( tenant.id, true);
-    acl.setRoleReadAccess( user.id, true);
-    acl.setRoleWriteAccess( user.id, true);
+    acl.setReadAccess( tenant.id, true);
+    acl.setWriteAccess( tenant.id, true);
+    acl.setReadAccess( user.id, true);
+    acl.setWriteAccess( user.id, true);
 
     console.log("client.setACL(acl)");
 
