@@ -335,6 +335,7 @@ Parse.Cloud.define('newClient', function(request, response){
       client.set('email',request.params.email);
       client.set('phone',request.params.phone);
       save(client).then((client)=>{
+        console.log("tenant id : "+tenant.id);
         setNewClientACLRolesAndPermissions(clientUser,client,tenant).then((client)=>{
           response.success(client);
         }).catch((error)=>{
